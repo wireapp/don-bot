@@ -1,0 +1,9 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8060
+  adminConnectors:
+    - type: http
+      port: 8061
+
+auth: Bearer auth_token
