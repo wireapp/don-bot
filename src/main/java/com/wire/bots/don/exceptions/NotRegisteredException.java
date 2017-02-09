@@ -7,7 +7,7 @@ package com.wire.bots.don.exceptions;
  * Time: 17:32
  */
 public class NotRegisteredException extends Exception {
-    public NotRegisteredException(String bot) {
-        super("Not registered exception for botId: " + bot);
+    public NotRegisteredException(String userId) {
+        super("Not registered exception for user: " + userId);
     }
 }

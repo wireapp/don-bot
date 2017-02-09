@@ -1,25 +1,19 @@
 package com.wire.bots.don.commands;
 
+import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Service;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
-import com.wire.bots.sdk.Configuration;
 import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 25/10/16
- * Time: 15:24
- */
 public class NewServiceCommand extends Command {
-    private final String base;
+    private final int serviceId;
 
-    public NewServiceCommand(WireClient client, Configuration config) throws Exception {
-        super(client, config);
+    public NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
+        super(client, userId, db);
 
         if (!isAuthenticated()) {
             authenticate();
@@ -27,44 +21,38 @@ public class NewServiceCommand extends Command {
 
         client.sendText("What should we call this bot?");
 
-        Random rnd = new Random();
-        base = "" + rnd.nextInt();
+        serviceId = db.insertService();
     }
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
-        String bot = botId;
+        Service service = db.getService(serviceId);
 
-        String cookie = readCookie();
-
-        String name = read(bot, base + "name");
-        if (name == null) {
-            write(bot, base + "name", text);
+        if (service.name == null) {
+            db.updateService(serviceId, "name", text);
             client.sendText("What is the base url for this bot?");
             return this;
         }
 
-        String url = read(bot, base + "url");
-        if (url == null) {
+        if (service.url == null) {
             if (!text.toLowerCase().startsWith("https://")) {
                 client.sendText("Please, specify valid https url like: https://example.com");
                 return this;
             }
-            write(bot, base + "url", text.toLowerCase());
+            db.updateService(serviceId, "url", text.toLowerCase());
+
             client.sendText("Write some description for this bot");
             return this;
         }
 
-        String desc = read(bot, base + "description");
-        if (desc == null) {
-            write(bot, base + "description", text);
+        if (service.description == null) {
+            db.updateService(serviceId, "description", text);
             client.sendText("Paste the URL for the profile picture");
             return this;
         }
 
-        String profile = read(bot, base + "profile");
-        if (profile == null) {
-            write(bot, base + "profile", text);
+        if (service.profile == null) {
+            db.updateService(serviceId, "profile", text);
             client.sendText("Paste rsa public key here");
             return this;
         }
@@ -83,12 +71,13 @@ public class NewServiceCommand extends Command {
         client.sendText("OK. Here we go...");
 
         try {
-            ArrayList<Asset> assets = uploadProfile(cookie, profile);
+            String cookie = getUser().cookie;
+            ArrayList<Asset> assets = uploadProfile(cookie, service.profile);
 
             AuthToken authToken = providerClient.newService(cookie,
-                    name,
-                    url,
-                    desc,
+                    service.name,
+                    service.url,
+                    service.description,
                     pubkey,
                     new String[]{"tutorial"},
                     assets);

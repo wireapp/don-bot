@@ -7,14 +7,6 @@ import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.models.TextMessage;
 import com.wire.bots.sdk.server.model.NewBot;
 
-import java.io.IOException;
-
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 24/10/16
- * Time: 12:53
- */
 public class MessageHandler extends MessageHandlerBase {
     private final Don don;
 
@@ -41,7 +33,7 @@ public class MessageHandler extends MessageHandlerBase {
                     newBot.origin.name,
                     newBot.locale));
 
-            return don.onNewBot(newBot.id, newBot.origin.id, newBot.origin.name);
+            return don.onNewBot(newBot.origin.id, newBot.origin.name);
         } catch (Exception e) {
             Logger.error(e.getMessage());
         }
@@ -67,7 +59,7 @@ public class MessageHandler extends MessageHandlerBase {
                     msg.getUserId(),
                     msg.getText()));
 
-            don.onMessage(client, msg.getText());
+            don.onMessage(client, msg);
         } catch (Exception e) {
             e.printStackTrace();
             try {
@@ -75,15 +67,6 @@ public class MessageHandler extends MessageHandlerBase {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-        }
-    }
-
-    @Override
-    public void onBotRemoved(String botId) {
-        try {
-            don.onBotRemoved(botId);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.wire.bots.don.commands;
 
+import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.Configuration;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
@@ -13,14 +13,14 @@ import java.util.ArrayList;
  * Time: 15:25
  */
 public class ListServicesCommand extends Command {
-    public ListServicesCommand(WireClient client, Configuration config) throws Exception {
-        super(client, config);
+    public ListServicesCommand(WireClient client, String userId, Manager db) throws Exception {
+        super(client, userId, db);
 
         if (!isAuthenticated()) {
             authenticate();
         }
 
-        String cookie = readCookie();
+        String cookie = getUser().cookie;
 
         ArrayList<Service> services = providerClient.listServices(cookie);
         if (services.isEmpty())

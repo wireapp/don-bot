@@ -6,7 +6,7 @@ import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.*;
 import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.Util;
-import com.wire.bots.sdk.assets.IAsset;
+import com.wire.bots.sdk.assets.Picture;
 import com.wire.bots.sdk.models.AssetKey;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -218,7 +218,9 @@ public class ProviderClient {
         return response.getStatus() == 200;
     }
 
-    public String uploadProfilePicture(String cookie, IAsset image) throws Exception {
+    public String uploadProfilePicture(String cookie, Picture image) throws Exception {
+        byte[] data = image.getImageData();
+
         String strMetadata = String.format("{\"public\": %s, \"retention\": \"eternal\"}", true);
         StringBuilder sb = new StringBuilder();
 
@@ -237,16 +239,16 @@ public class ProviderClient {
                 .append(image.getMimeType())
                 .append("\r\n");
         sb.append("Content-Length: ")
-                .append(image.getEncryptedData().length)
+                .append(data.length)
                 .append("\r\n");
         sb.append("Content-MD5: ")
-                .append(Util.calcMd5(image.getEncryptedData()))
+                .append(Util.calcMd5(data))
                 .append("\r\n\r\n");
 
         // Complete
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         os.write(sb.toString().getBytes("utf-8"));
-        os.write(image.getEncryptedData());
+        os.write(data);
         os.write("\r\n--frontier--\r\n".getBytes("utf-8"));
 
         Response response = client.target(httpUrl)
