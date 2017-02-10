@@ -42,7 +42,7 @@ public class Manager {
                     " Profile STRING)");
             if (update > 0)
                 Logger.info("CREATED TABLE Service");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Logger.error(e.getLocalizedMessage());
         }
@@ -96,14 +96,15 @@ public class Manager {
         }
     }
 
-    public int updateCookie(String userId, String cookie) throws Exception {
+    public int updateUser(String userId, String name, String value) throws Exception {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
 
             String cmd = String.format("UPDATE User SET " +
-                            "cookie = '%s' " +
+                            "%s = '%s' " +
                             "WHERE UserId = '%s'",
-                    cookie,
+                    name,
+                    value,
                     userId);
 
             return statement.executeUpdate(cmd);

@@ -41,45 +41,78 @@ public class ImportSqlV1 extends TaskBase {
             final String botId = botDir.getName();
 
             try {
-                String email = Util.readLine(new File(botDir.getPath() + "/don/.email"));
-                String userId = Util.readLine(new File(botDir.getPath() + "/don/.user"));
-                String userName = Util.readLine(new File(botDir.getPath() + "/don/.name"));
-                String password = Util.readLine(new File(botDir.getPath() + "/don/.password"));
-                String providerId = Util.readLine(new File(botDir.getPath() + "/don/.provider"));
-
                 output.printf("Checking botId %s ...\n", botId);
-                if (!validateUUID(userId)) {
-                    output.printf("Invalid userId: %s in file: %s\n", userId, botDir.getPath() + "/don/.user");
-                    continue;
-                }
-                if (!validateUUID(providerId)) {
-                    output.printf("Invalid providerId: %s in file: %s\n", providerId, botDir.getPath() + "/don/.provider");
-                    continue;
-                }
-                if (!validateEmail(email)) {
-                    output.printf("Invalid email: %s in file: %s\n", providerId, botDir.getPath() + "/don/.email");
+
+                File nameFile = new File(botDir.getPath() + "/don/.name");
+                File emailFile = new File(botDir.getPath() + "/don/.email");
+                File userFile = new File(botDir.getPath() + "/don/.user");
+                File passwordFile = new File(botDir.getPath() + "/don/.password");
+                File providerFile = new File(botDir.getPath() + "/don/.provider");
+
+                if (!userFile.exists()) {
+                    output.printf("\tMissing file: %s\n", userFile.getPath());
                     continue;
                 }
 
-                output.printf("Importing: %s %s %s %s\n", userId, userName, email, providerId);
+                if (!nameFile.exists()) {
+                    output.printf("\tMissing file: %s\n", nameFile.getPath());
+                    continue;
+                }
+
+                String userId = Util.readLine(userFile);
+                if (!validateUUID(userId)) {
+                    output.printf("\tInvalid userId: %s in file: %s\n", userId, botDir.getPath() + "/don/.user");
+                    continue;
+                }
+
+                String userName = Util.readLine(nameFile);
 
                 User user = db.getUser(userId);
                 if (user == null) {
                     int i = db.insertUser(userId, userName);
-                    output.printf("\tinsertUser: res: %d\n", i);
+                    output.printf("\tinsertUser: %s %s res: %d\n", userId, userName, i);
                 }
-                int u = db.updateUser(userId, email, password, providerId);
-                output.printf("\tupdateUser: res: %d\n", u);
-                output.printf("Finished botId %s\n", botId);
 
-                output.flush();
+                // Email
+                if (emailFile.exists()) {
+                    String email = Util.readLine(emailFile);
+                    if (validateEmail(email)) {
+                        int u = db.updateUser(userId, "email", email);
+                        output.printf("\tupdateUser Email: %s res: %d\n", email, u);
+                    } else {
+                        output.printf("\tInvalid Email: %s %s\n", email, emailFile.getPath());
+                    }
+                } else {
+                    output.printf("\tMissing file: %s\n", emailFile.getPath());
+                }
+
+                // Password
+                if (passwordFile.exists()) {
+                    String password = Util.readLine(passwordFile);
+
+                    int u = db.updateUser(userId, "password", password);
+                    output.printf("\tupdateUser password: %s res: %d\n", password, u);
+                } else {
+                    output.printf("\tMissing file: %s\n", passwordFile.getPath());
+                }
+
+                // Provider
+                if (providerFile.exists()) {
+                    String providerId = Util.readLine(providerFile);
+                    if (!validateUUID(providerId)) {
+                        output.printf("\tInvalid providerId: %s in file: %s\n", providerId, botDir.getPath() + "/don/.provider");
+                    }
+                } else {
+                    output.printf("\tMissing file: %s\n", providerFile.getPath());
+                }
+                output.printf("Imported: %s %s \n", userId, userName);
             } catch (Exception e) {
                 String msg = String.format("Bot: %s %s", botId, e.getMessage());
                 Logger.warning(msg);
                 output.println(msg);
-                output.flush();
                 e.printStackTrace();
             }
+            output.flush();
         }
     }
 

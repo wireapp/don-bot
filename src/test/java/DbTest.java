@@ -47,8 +47,50 @@ public class DbTest {
         assert (user.provider.equals(provider));
         assert (null == user.cookie);
 
-        int updateCookie = manager.updateCookie(userId, cookie);
+        int updateCookie = manager.updateUser(userId, "cookie", cookie);
         assert updateCookie == 1;
+
+        user = manager.getUser(userId);
+        assert (user.cookie.equals(cookie));
+    }
+
+    @Test
+    public void updateUserTest() throws Exception {
+        Manager manager = new Manager(TEST_DB);
+        String userId = UUID.randomUUID().toString();
+        String userName = "user name";
+        String email = "test@test.com";
+        String password = "secret";
+        String provider = UUID.randomUUID().toString();
+        String cookie = "cookie";
+
+        int insert = manager.insertUser(userId, userName);
+        assert (insert == 1);
+
+        // Email
+        int updateUser = manager.updateUser(userId, "email", email);
+        assert (updateUser == 1);
+
+        User user = manager.getUser(userId);
+        assert (user.email.equals(email));
+
+        // Password
+        updateUser = manager.updateUser(userId, "password", password);
+        assert (updateUser == 1);
+
+        user = manager.getUser(userId);
+        assert (user.password.equals(password));
+
+        // ProviderId
+        updateUser = manager.updateUser(userId, "provider", provider);
+        assert (updateUser == 1);
+
+        user = manager.getUser(userId);
+        assert (user.provider.equals(provider));
+
+        // Cookie
+        updateUser = manager.updateUser(userId, "cookie", cookie);
+        assert (updateUser == 1);
 
         user = manager.getUser(userId);
         assert (user.cookie.equals(cookie));
@@ -68,7 +110,7 @@ public class DbTest {
         User user = manager.getUser(userId);
         assert (null == user.cookie);
 
-        int updateCookie = manager.updateCookie(userId, cookie);
+        int updateCookie = manager.updateUser(userId, "cookie", cookie);
         assert updateCookie == 1;
 
         user = manager.getUser(userId);

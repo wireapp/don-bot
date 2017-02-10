@@ -47,7 +47,7 @@ public abstract class Command {
         User user = getUser();
         if (user.password != null && user.email != null) {
             String cookie = providerClient.authenticate(user.email, user.password);
-            db.updateCookie(userId, cookie);
+            int u = db.updateUser(userId, "cookie", cookie);
         } else {
             throw new NotRegisteredException(userId);
         }
