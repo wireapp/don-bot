@@ -12,12 +12,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 27/10/16
- * Time: 21:29
- */
 public class SearchClient {
     private final Client client;
     private final String httpUrl;

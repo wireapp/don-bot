@@ -10,12 +10,6 @@ import com.wire.bots.sdk.models.TextMessage;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 24/10/16
- * Time: 22:08
- */
 public class Don {
     private final Manager db;
     private final ConcurrentHashMap<String, Command> commands = new ConcurrentHashMap<>();

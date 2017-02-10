@@ -13,12 +13,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 01/11/16
- * Time: 15:50
- */
 public class AdminClient {
     private final Client client;
     private final String httpUrl = "https://wire.com/api/v1/admin/bot/";

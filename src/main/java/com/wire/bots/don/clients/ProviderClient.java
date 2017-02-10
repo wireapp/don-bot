@@ -21,12 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 24/10/16
- * Time: 13:00
- */
 public class ProviderClient {
     private final Client client;
     private final String httpUrl;
