@@ -1,0 +1,13 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8060
+  adminConnectors:
+    - type: http
+      port: 8061
+
+auth: Bearer auth_token
+botName: DevBot
+accentColour: 1
+smallProfile: 3-1-acb89168-3557-479d-b291-96131e8b69b1
+bigProfile: 3-1-c141dab7-6497-43f2-90cd-99d1c5c61866
