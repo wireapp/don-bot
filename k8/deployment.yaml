@@ -1,0 +1,77 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: don
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: don
+    spec:
+      restartPolicy: Always
+
+      containers:
+        - name: don
+          image: eu.gcr.io/wire-bot/don:latest
+
+          resources:
+            requests:
+              memory: "50Mi"
+            limits:
+              memory: "500Mi"
+
+          env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: don-knows
+                  key: token
+
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: don-knows
+                  key: keystore_password
+
+          volumeMounts:
+            - name: don-disk
+              mountPath: /var/lib/don/crypto
+
+            - name: don-config
+              mountPath: /etc/don
+
+          command:
+            - "/usr/bin/java"
+            - "-Ddw.server.applicationConnectors[1].keyStorePassword=$(KEYSTORE_PASSWORD)"
+            - "-Ddw.auth=$(TOKEN)"
+            - "-jar"
+            - "don.jar"
+            - "server"
+            - "/etc/don/don.yaml"
+
+      volumes:
+        - name: don-disk
+          gcePersistentDisk:
+            pdName: don-disk
+            fsType: ext4
+
+        - name: don-config
+          configMap:
+            name: don-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: don
+spec:
+  selector:
+    name: don
+  type: LoadBalancer
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP

@@ -28,12 +28,6 @@ public class RegisterCommand extends Command {
 
         User user = getUser();
 
-        // just for debug
-        if (user == null) {
-            db.insertUser(userId, email);
-            user = getUser();
-        }
-
         if (user.email != null && user.email.equals(email)) {
             String msg = String.format("Attempt to register multiple times with the same email address. Bot: %s" +
                             ", email: %s",
