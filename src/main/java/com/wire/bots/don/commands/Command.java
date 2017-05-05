@@ -11,12 +11,8 @@ import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.assets.Picture;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class Command {
     protected final WireClient client;
@@ -72,37 +68,15 @@ public abstract class Command {
             asset.key = providerClient.uploadProfilePicture(cookie, smallImage);
             asset.size = "preview";
             ret.add(asset);
-            //debug
-            verifyProfile(asset.key, smallImage.getImageData());
-            //debug
 
             asset = new Asset();
             asset.key = providerClient.uploadProfilePicture(cookie, mediumImage);
             asset.size = "complete";
             ret.add(asset);
-            //debug
-            verifyProfile(asset.key, mediumImage.getImageData());
-            //debug
 
-            return ret;
         } catch (Exception e) {
             Logger.info("Failed to set the profile pic: " + e.getMessage());
-            return null;
         }
-    }
-
-    private void verifyProfile(String key, byte[] imageData) {
-        try {
-            byte[] bytes = client.downloadProfilePicture(key);
-            if (!Arrays.equals(bytes, imageData)) {
-                Logger.warning("Profile picture mismatch");
-            } else {
-                String p = String.format("crypto/don/%s/%s.jpg", client.getId(), key);
-                Path path = Paths.get(p);
-                Files.write(path, imageData);
-            }
-        } catch (Exception e) {
-            Logger.warning(e.getMessage());
-        }
+        return ret;
     }
 }

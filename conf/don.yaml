@@ -15,4 +15,7 @@ server:
   requestLog:
     appenders: []
 
-cryptoDir: /var/lib/don/crypto  # path to dir where to story crypto box files - directory must exists!
+cryptoDir: /var/lib/don/crypto  # path to dir where to store crypto box files - directory must exists!
+channelHost: ''
+pathPubKey: '/etc/don/pubkey.pem'
+pathAdmin: '/etc/don/.admin'

@@ -4,9 +4,13 @@ import com.wire.bots.sdk.Configuration;
 
 public class DonConfig extends Configuration {
     private String botName;
-    private int    accentColour;
+    private int accentColour;
     private String smallProfile;
     private String bigProfile;
+    private String channelHost;
+    private String channelSecret;
+    private String pathPubKey;
+    private String pathAdmin;
 
     public String getBotName() {
         return botName;
@@ -24,19 +28,19 @@ public class DonConfig extends Configuration {
         return bigProfile;
     }
 
-    public void setBotName(String botName) {
-        this.botName = botName;
+    public String getChannelHost() {
+        return channelHost;
     }
 
-    public void setAccentColour(int accentColour) {
-        this.accentColour = accentColour;
+    public String getPathPubKey() {
+        return pathPubKey;
     }
 
-    public void setSmallProfile(String smallProfile) {
-        this.smallProfile = smallProfile;
+    public String getPathAdmin() {
+        return pathAdmin;
     }
 
-    public void setBigProfile(String bigProfile) {
-        this.bigProfile = bigProfile;
+    public String getChannelSecret() {
+        return channelSecret;
     }
 }

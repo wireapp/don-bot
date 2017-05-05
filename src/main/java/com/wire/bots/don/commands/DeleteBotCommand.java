@@ -27,13 +27,12 @@ public class DeleteBotCommand extends Command {
             if (s.name.compareToIgnoreCase(botName) == 0) {
                 providerClient.deleteService(cookie, password, s.id);
 
-                File file = new File(String.format("%s/don/.admin", Don.config.cryptoDir));
+                File file = new File(Don.config.getPathAdmin());
                 String admin = Util.readLine(file);
 
                 String clean = s.name.replaceAll("[^A-Za-z0-9]", "");
 
-                AdminClient adminClient = new AdminClient();
-                adminClient.deleteLink(clean, admin);
+                AdminClient.deleteLink(clean, admin);
 
                 client.sendText("Deleted " + s.name);
                 return;

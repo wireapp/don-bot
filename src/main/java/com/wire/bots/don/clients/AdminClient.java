@@ -20,7 +20,7 @@ public class AdminClient {
         client = JerseyClientBuilder.createClient(cfg);
     }
 
-    public String generateInviteLink(String botName, String provider, String service, String desc, String cookie) {
+    public static String generateInviteLink(String botName, String provider, String service, String desc, String cookie) {
         DOM dom = new DOM();
         dom.name = botName.toLowerCase().trim();
         dom.provider = provider;
@@ -39,7 +39,7 @@ public class AdminClient {
         return "wire.com/b/" + dom.name;
     }
 
-    public void deleteLink(String botName, String cookie) {
+    public static void deleteLink(String botName, String cookie) {
         Response response = client.target(httpUrl).
                 path(botName).
                 request(MediaType.APPLICATION_JSON).

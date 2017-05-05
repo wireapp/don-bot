@@ -32,12 +32,12 @@ public class EnableServiceCommand extends Command {
                 if (b) {
                     client.sendText("Enabled " + s.name);
 
-                    File file = new File(String.format("%s/don/.admin", Don.config.cryptoDir));
+                    File file = new File(Don.config.getPathAdmin());
                     String admin = Util.readLine(file);
+
                     String clean = s.name.replaceAll("[^A-Za-z0-9]", "");
 
-                    AdminClient adminClient = new AdminClient();
-                    String link = adminClient.generateInviteLink(clean, user.provider, s.id, s.description, admin);
+                    String link = AdminClient.generateInviteLink(clean, user.provider, s.id, s.description, admin);
                     if (link != null) {
                         String msg = "Users can start using your bot by clicking on this link: " + link;
                         client.sendText(msg);

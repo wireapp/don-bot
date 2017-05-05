@@ -4,7 +4,6 @@ import com.wire.bots.don.commands.Command;
 import com.wire.bots.don.commands.DefaultCommand;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
-import com.wire.bots.sdk.Configuration;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.models.TextMessage;
 
@@ -13,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Don {
     private final Manager db;
     private final ConcurrentHashMap<String, Command> commands = new ConcurrentHashMap<>();
-    public static Configuration config;
+    public static DonConfig config;
 
-    public Don(Configuration config) {
+    public Don(DonConfig config) {
         db = new Manager(config.cryptoDir + "/don.db");
         this.config = config;
     }

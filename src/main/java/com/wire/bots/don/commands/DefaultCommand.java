@@ -56,6 +56,10 @@ public class DefaultCommand extends Command {
                 return new NewServiceCommand(client, userId, db);
             }
 
+            if (text.startsWith("create public channel")) {
+                return new NewChannelCommand(client, userId, db);
+            }
+
             if (text.startsWith("search bot")) {
                 String botName = getParams(text.substring("search bot".length()));
                 new SearchCommand(client, userId, db, botName);
@@ -66,7 +70,8 @@ public class DefaultCommand extends Command {
                     "You don't offer friendship. " +
                     "You don't even think to call me: \"Don\"");
             client.sendText("\nUsage:\nregister\nget self\ncreate bot\nlist my bots" +
-                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>");
+                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>\n" +
+                    "create public channel");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());
             client.sendText("Not registered yet");
