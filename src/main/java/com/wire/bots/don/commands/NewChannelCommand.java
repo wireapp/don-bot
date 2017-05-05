@@ -27,7 +27,7 @@ public class NewChannelCommand extends Command {
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
-        String name = text.replaceAll("[^A-Za-z0-9]", "");
+        String name = text.replaceAll("[^A-Za-z0-9]", "").toLowerCase();
         String description = "Public channel";
 
         try {
@@ -37,9 +37,7 @@ public class NewChannelCommand extends Command {
             String url = String.format("https://%s:443/channels/%s", Don.config.getChannelHost(), name);
             String pubkey = Util.readFile(new File(Don.config.getPathPubKey()));
 
-            Logger.info("Registering public channel:\nname: %s\nurl: %s",
-                    name,
-                    url);
+            Logger.info("Registering public channel: %s", url);
 
             String profile = "https://i2.wp.com/www.davidebowman.com/wp-content/uploads/2011/01/radio-tower.gif";
             ArrayList<Asset> assets = uploadProfile(cookie, profile);
@@ -52,9 +50,14 @@ public class NewChannelCommand extends Command {
                     new String[]{"tutorial"},
                     assets);
 
-            Logger.info("Public channel: id: %s, token: %s\", result.id, result.auth_token");
+            Logger.info("Public channel: id: %s, token: %s", result.id, result.auth_token);
 
-            PublicChannelClient.setToken(name, user.id, result.auth_token);
+            boolean b = PublicChannelClient.setToken(name, user.id, result.auth_token);
+            if (!b) {
+                client.sendText("Failed to create a public channel with that name");
+                providerClient.deleteService(cookie, user.password, result.id);
+                return def();
+            }
 
             providerClient.enableService(cookie, user.password, result.id);
 
@@ -63,8 +66,7 @@ public class NewChannelCommand extends Command {
 
             String link = AdminClient.generateInviteLink(name, user.provider, result.id, description, admin);
             if (link != null) {
-                String msg = String.format("Public channel: `%s` created. Click here: %s to subscribe.\n" +
-                                "You need to subscribe in order to enable this channel",
+                String msg = String.format("Public channel: `%s` created. Click here: %s to subscribe.",
                         name,
                         link);
                 client.sendText(msg);
