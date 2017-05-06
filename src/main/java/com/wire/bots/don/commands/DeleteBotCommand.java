@@ -2,6 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.Don;
 import com.wire.bots.don.clients.AdminClient;
+import com.wire.bots.don.clients.PublicChannelClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Service;
@@ -33,6 +34,8 @@ public class DeleteBotCommand extends Command {
                 String clean = s.name.replaceAll("[^A-Za-z0-9]", "");
 
                 AdminClient.deleteLink(clean, admin);
+
+                PublicChannelClient.deleteChannel(clean, user.id, s.auth_tokens[0]);
 
                 client.sendText("Deleted " + s.name);
                 return;

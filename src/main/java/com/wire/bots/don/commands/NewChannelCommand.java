@@ -52,9 +52,9 @@ public class NewChannelCommand extends Command {
 
             Logger.info("Public channel: id: %s, token: %s", result.id, result.auth_token);
 
-            boolean b = PublicChannelClient.setToken(name, user.id, result.auth_token);
+            boolean b = PublicChannelClient.createChannel(name, user.id, result.auth_token);
             if (!b) {
-                client.sendText("Failed to create a public channel with that name");
+                client.sendText("Failed to create public channel with that name");
                 providerClient.deleteService(cookie, user.password, result.id);
                 return def();
             }

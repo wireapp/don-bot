@@ -5,6 +5,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.wire.bots.don.Don;
 import com.wire.bots.sdk.Logger;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
@@ -17,10 +18,11 @@ public class PublicChannelClient {
 
     static {
         ClientConfig cfg = new ClientConfig(JacksonJsonProvider.class);
+        cfg.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
         client = JerseyClientBuilder.createClient(cfg);
     }
 
-    public static boolean setToken(String channelName, String origin, String token) {
+    public static boolean createChannel(String channelName, String origin, String token) {
         DOM dom = new DOM();
         dom.token = token;
         dom.origin = origin;
@@ -35,6 +37,28 @@ public class PublicChannelClient {
                 post(Entity.entity(dom, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() != 200) {
+            Logger.warning(response.readEntity(String.class));
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteChannel(String channelName, String origin, String token) {
+        DOM dom = new DOM();
+        dom.token = token;
+        dom.origin = origin;
+
+        String url = String.format("http://%s:8080", Don.config.getChannelHost());
+
+        Response response = client.target(url).
+                path("admin/channels").
+                path(channelName).
+                request(MediaType.APPLICATION_JSON).
+                header("Authorization", Don.config.getChannelSecret()).
+                build("DELETE", Entity.entity(dom, MediaType.APPLICATION_JSON)).
+                invoke();
+
+        if (response.getStatus() > 300) {
             Logger.warning(response.readEntity(String.class));
             return false;
         }
