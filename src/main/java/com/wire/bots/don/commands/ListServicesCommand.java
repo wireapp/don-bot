@@ -20,9 +20,7 @@ public class ListServicesCommand extends Command {
             authenticate();
         }
 
-        String cookie = getUser().cookie;
-
-        ArrayList<Service> services = providerClient.listServices(cookie);
+        ArrayList<Service> services = providerClient.listServices(getUser().cookie);
         if (services.isEmpty())
             client.sendText("You have no bots yet :(. Type: `create bot` to create your first bot");
 

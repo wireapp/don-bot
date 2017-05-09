@@ -5,8 +5,10 @@ import com.wire.bots.don.clients.AdminClient;
 import com.wire.bots.don.clients.PublicChannelClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
+import com.wire.bots.don.exceptions.TooManyBotsException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
+import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.Util;
 import com.wire.bots.sdk.WireClient;
@@ -21,6 +23,10 @@ public class NewChannelCommand extends Command {
         if (!isAuthenticated()) {
             authenticate();
         }
+
+        ArrayList<Service> services = providerClient.listServices(getUser().cookie);
+        if(services.size() >= 10)
+            throw new TooManyBotsException("You have too many bots already. Try deleting some that are not in use");
 
         client.sendText("What should we call this channel?");
     }

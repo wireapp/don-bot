@@ -76,7 +76,7 @@ public class DefaultCommand extends Command {
             Logger.info(e.getMessage());
             client.sendText("Not registered yet");
         } catch (FailedAuthenticationException e) {
-            Logger.info(e.getMessage() + ". BotId: " + botId);
+            Logger.info("%s. BotId: %s", e.getMessage(), botId);
             client.sendText("Authentication failed");
         } catch (AlreadyRegisteredException e) {
             Logger.info(e.getMessage());
@@ -87,8 +87,11 @@ public class DefaultCommand extends Command {
         } catch (UnknownBotException e) {
             Logger.info(e.getMessage());
             client.sendText(e.getMessage());
+        } catch (TooManyBotsException e) {
+            Logger.warning(e.getMessage());
+            client.sendText(e.getMessage());
         } catch (Exception e) {
-            Logger.info(e.getMessage() + ". BotId: " + botId);
+            Logger.error("%s. BotId: %s", e.getMessage(), botId);
             client.sendText("Something went terribly wrong. Please try again.\n" + e.getMessage());
             deleteCookie();
         }
