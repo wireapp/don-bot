@@ -16,7 +16,7 @@ public class Don {
 
     public Don(DonConfig config) {
         db = new Manager(config.cryptoDir + "/don.db");
-        this.config = config;
+        Don.config = config;
     }
 
     public boolean onNewBot(String userId, String nameName) throws Exception {

@@ -3,7 +3,7 @@ package com.wire.bots.don;
 import com.wire.bots.sdk.Configuration;
 
 public class DonConfig extends Configuration {
-    private String botName;
+    private String botName = "Dev Bot";
     private int accentColour;
     private String smallProfile;
     private String bigProfile;
