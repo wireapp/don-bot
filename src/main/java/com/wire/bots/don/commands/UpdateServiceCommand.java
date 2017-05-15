@@ -39,7 +39,7 @@ public class UpdateServiceCommand extends Command {
         db.updateService(id, "serviceId", serviceId);
         db.updateService(id, "name", serviceName);
 
-        String txt = String.format("What do you want to change? (%s, %s, %s, %s, %s)?"
+        String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`)?"
                 , URL
                 , TOKEN
                 , PUBKEY
@@ -55,7 +55,7 @@ public class UpdateServiceCommand extends Command {
         if (service.field == null) {
             service.field = text.toLowerCase();
             if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` `%s` `%s` `%s` `%s`"
+                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s`"
                         , URL
                         , TOKEN
                         , PUBKEY
