@@ -91,6 +91,11 @@ public class MessageHandler extends MessageHandlerBase {
     }
 
     @Override
+    public void onEditText(WireClient client, TextMessage msg) {
+        onText(client, msg);
+    }
+
+    @Override
     public void onEvent(WireClient client, String userId, Messages.GenericMessage genericMessage) {
         if (genericMessage.hasConfirmation()) {
             metrics.meter("engagement.delivery").mark();
