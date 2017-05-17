@@ -76,10 +76,10 @@ public class UpdateServiceCommand extends Command {
 
         String value = text;
 
-        String url = service.field.equals(URL) ? value.toLowerCase() : null;
-        String[] tokens = service.field.equals(TOKEN) ? new String[]{value} : null;
-        String[] pubkeys = service.field.equals(PUBKEY) ? new String[]{value} : null;
-        String description = service.field.equals(DESCRIPTION) ? value : null;
+        String url = service.field.equalsIgnoreCase(URL) ? value.toLowerCase() : null;
+        String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
+        String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
+        String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
 
         ArrayList<Asset> assets = null;
         if (PROFILE_PICTURE.contains(service.field)) {
