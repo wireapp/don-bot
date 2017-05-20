@@ -27,13 +27,13 @@ public class PublicChannelClient {
         dom.token = token;
         dom.origin = origin;
 
-        String url = String.format("http://%s:8080", Don.config.getChannelHost());
+        String url = String.format("http://%s:8080", Don.config.getChannel().getHost());
 
         Response response = client.target(url).
                 path("admin/channels").
                 path(channelName).
                 request(MediaType.APPLICATION_JSON).
-                header("Authorization", Don.config.getChannelSecret()).
+                header("Authorization", Don.config.getChannel().getSecret()).
                 post(Entity.entity(dom, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() != 200) {
@@ -48,13 +48,13 @@ public class PublicChannelClient {
         dom.token = token;
         dom.origin = origin;
 
-        String url = String.format("http://%s:8080", Don.config.getChannelHost());
+        String url = String.format("http://%s:8080", Don.config.getChannel().getHost());
 
         Response response = client.target(url).
                 path("admin/channels").
                 path(channelName).
                 request(MediaType.APPLICATION_JSON).
-                header("Authorization", Don.config.getChannelSecret()).
+                header("Authorization", Don.config.getChannel().getSecret()).
                 build("DELETE", Entity.entity(dom, MediaType.APPLICATION_JSON)).
                 invoke();
 
@@ -67,8 +67,8 @@ public class PublicChannelClient {
 
     public static class DOM {
         @JsonProperty
-        public String token;
+        String token;
         @JsonProperty
-        public String origin;
+        String origin;
     }
 }

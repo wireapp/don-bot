@@ -7,10 +7,13 @@ public class DonConfig extends Configuration {
     private int accentColour;
     private String smallProfile;
     private String bigProfile;
-    private String channelHost;
-    private String channelSecret;
     private String pathPubKey;
     private String pathAdmin;
+    private Channel channel;
+
+    public Channel getChannel() {
+        return channel;
+    }
 
     public String getBotName() {
         return botName;
@@ -28,10 +31,6 @@ public class DonConfig extends Configuration {
         return bigProfile;
     }
 
-    public String getChannelHost() {
-        return channelHost;
-    }
-
     public String getPathPubKey() {
         return pathPubKey;
     }
@@ -40,7 +39,21 @@ public class DonConfig extends Configuration {
         return pathAdmin;
     }
 
-    public String getChannelSecret() {
-        return channelSecret;
+    public static class Channel {
+        private String host;
+        private String secret;
+        private String publicIP;
+
+        public String getHost() {
+            return host;
+        }
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public String getPublicIP() {
+            return publicIP;
+        }
     }
 }

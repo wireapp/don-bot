@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class DeleteBotCommand extends Command {
-    public DeleteBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
+    DeleteBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
         super(client, userId, db);
 
         if (!isAuthenticated()) {
@@ -35,9 +35,10 @@ public class DeleteBotCommand extends Command {
 
                 AdminClient.deleteLink(clean, admin);
 
-                PublicChannelClient.deleteChannel(clean, user.id, s.auth_tokens[0]);
+                boolean deleteChannel = PublicChannelClient.deleteChannel(clean, user.id, s.auth_tokens[0]);
 
-                client.sendText("Deleted " + s.name);
+                String txt = deleteChannel ? "Deleted channel: " + s.name : "Deleted bot: " + s.name;
+                client.sendText(txt);
                 return;
             }
         }

@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class NewChannelCommand extends Command {
-    public NewChannelCommand(WireClient client, String userId, Manager db) throws Exception {
+    NewChannelCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
         if (!isAuthenticated()) {
@@ -40,7 +40,7 @@ public class NewChannelCommand extends Command {
             User user = getUser();
             String cookie = user.cookie;
 
-            String url = String.format("https://%s:443/channels/%s", Don.config.getChannelHost(), name);
+            String url = String.format("https://%s:443/channels/%s", Don.config.getChannel().getPublicIP(), name);
             String pubkey = Util.readFile(new File(Don.config.getPathPubKey()));
 
             Logger.info("Registering public channel: %s", url);
