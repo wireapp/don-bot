@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 public class PublicChannelClient {
     private static final Client client;
+    private static final String HTTP_CHANNEL_LOCAL_DEFAULT_SVC_CLUSTER_LOCAL = "http://channel-local.default.svc.cluster.local";
 
     static {
         ClientConfig cfg = new ClientConfig(JacksonJsonProvider.class);
@@ -27,9 +28,7 @@ public class PublicChannelClient {
         dom.token = token;
         dom.origin = origin;
 
-        String url = String.format("http://%s:8080", Don.config.getChannel().getHost());
-
-        Response response = client.target(url).
+        Response response = client.target(HTTP_CHANNEL_LOCAL_DEFAULT_SVC_CLUSTER_LOCAL).
                 path("admin/channels").
                 path(channelName).
                 request(MediaType.APPLICATION_JSON).
@@ -48,9 +47,7 @@ public class PublicChannelClient {
         dom.token = token;
         dom.origin = origin;
 
-        String url = String.format("http://%s:8080", Don.config.getChannel().getHost());
-
-        Response response = client.target(url).
+        Response response = client.target(HTTP_CHANNEL_LOCAL_DEFAULT_SVC_CLUSTER_LOCAL).
                 path("admin/channels").
                 path(channelName).
                 request(MediaType.APPLICATION_JSON).

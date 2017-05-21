@@ -40,12 +40,12 @@ public class DonConfig extends Configuration {
     }
 
     public static class Channel {
-        private String host;
+        private String channelUrl;
         private String secret;
         private String publicIP;
 
-        public String getHost() {
-            return host;
+        public String getChannelUrl() {
+            return channelUrl;
         }
 
         public String getSecret() {

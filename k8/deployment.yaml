@@ -53,7 +53,7 @@ spec:
             - "-Ddw.server.applicationConnectors[1].keyStorePassword=$(KEYSTORE_PASSWORD)"
             - "-Ddw.auth=$(TOKEN)"
             - "-Ddw.channel.secret=$(CHANNEL_SECRET)"
-            - "-Ddw.channel.host=$(CHANNEL_SERVICE_HOST)"
+            - "-Ddw.channel.channelUrl=http://channel-local.default.svc.cluster.local"
             - "-Ddw.channel.publicIP=35.187.36.97"
             - "-jar"
             - "don.jar"

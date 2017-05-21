@@ -37,7 +37,8 @@ public class DeleteBotCommand extends Command {
 
                 boolean deleteChannel = PublicChannelClient.deleteChannel(clean, user.id, s.auth_tokens[0]);
 
-                String txt = deleteChannel ? "Deleted channel: " + s.name : "Deleted bot: " + s.name;
+                String txt = deleteChannel ? String.format("Deleted channel: **%s**", s.name)
+                        : String.format("Deleted bot: **%s**", s.name);
                 client.sendText(txt);
                 return;
             }
