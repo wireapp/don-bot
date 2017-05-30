@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public abstract class Command {
     protected final WireClient client;
     protected final String userId;
-    protected final String botId;
+    final String botId;
     protected final Manager db;
     protected static ProviderClient providerClient = new ProviderClient();
 
@@ -30,7 +30,7 @@ public abstract class Command {
 
     public abstract Command onMessage(WireClient client, String text) throws Exception;
 
-    protected Command def() {
+    Command def() {
         return new DefaultCommand(client, userId, db);
     }
 
@@ -47,17 +47,17 @@ public abstract class Command {
         User user = getUser();
         if (user.password != null && user.email != null) {
             String cookie = providerClient.authenticate(user.email, user.password);
-            int u = db.updateUser(userId, "cookie", cookie);
+            db.updateUser(userId, "cookie", cookie);
         } else {
             throw new NotRegisteredException(userId);
         }
     }
 
-    protected void deleteCookie() throws SQLException {
+    void deleteCookie() throws SQLException {
         db.deleteCookie(userId);
     }
 
-    protected ArrayList<Asset> uploadProfile(String cookie, String path) {
+    ArrayList<Asset> uploadProfile(String cookie, String path) {
         ArrayList<Asset> ret = new ArrayList<>();
         try {
             Picture pic = ImageLoader.loadImage(path);

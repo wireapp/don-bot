@@ -19,7 +19,7 @@ public class UpdateServiceCommand extends Command {
     private final int id;
     private final String cookie;
 
-    protected UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
         super(client, userId, db);
 
         id = db.insertService();

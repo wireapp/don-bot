@@ -7,12 +7,10 @@ import com.wire.bots.sdk.WireClient;
 import java.util.ArrayList;
 
 public class ListServicesCommand extends Command {
-    public ListServicesCommand(WireClient client, String userId, Manager db) throws Exception {
+    ListServicesCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        if (!isAuthenticated()) {
-            authenticate();
-        }
+        authenticate();
 
         ArrayList<Service> services = providerClient.listServices(getUser().cookie);
         if (services.isEmpty()) {

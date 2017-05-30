@@ -13,15 +13,13 @@ import java.util.ArrayList;
 public class NewServiceCommand extends Command {
     private final int serviceId;
 
-    public NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
+    NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        if (!isAuthenticated()) {
-            authenticate();
-        }
+        authenticate();
 
         ArrayList<com.wire.bots.don.model.Service> services = providerClient.listServices(getUser().cookie);
-        if(services.size() >= 10)
+        if (services.size() >= 10)
             throw new TooManyBotsException("You have too many bots already. Try deleting some that are not in use");
 
         client.sendText("What should we call this bot?");
