@@ -50,11 +50,11 @@ public class Manager {
 
     public int insertUser(String userId, String name) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            String cmd = String.format("INSERT INTO User (UserId, Name) VALUES('%s', '%s')", userId, name);
-
-            return statement.executeUpdate(cmd);
+            String cmd = "INSERT INTO User (UserId, Name) VALUES(?, ?)";
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, userId);
+            stm.setString(2, name);
+            return stm.executeUpdate();
         }
     }
 
@@ -62,7 +62,8 @@ public class Manager {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
 
-            ResultSet rs = statement.executeQuery("SELECT * FROM User WHERE UserId = '" + userId + "'");
+            String cmd = String.format("SELECT * FROM User WHERE UserId = '%s'", userId);
+            ResultSet rs = statement.executeQuery(cmd);
             User user = new User();
             if (rs.next()) {
                 user.id = rs.getString("UserId");
@@ -80,34 +81,29 @@ public class Manager {
 
     public int updateUser(String userId, String email, String password, String provider) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
+            String cmd = "UPDATE User SET " +
+                    "Email = ?, " +
+                    "Password = ?, " +
+                    "Provider = ? " +
+                    "WHERE UserId = ?";
 
-            String cmd = String.format("UPDATE User SET " +
-                            "Email = '%s', " +
-                            "Password = '%s', " +
-                            "Provider = '%s' " +
-                            "WHERE UserId = '%s'",
-                    email,
-                    password,
-                    provider,
-                    userId);
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, email);
+            stm.setString(2, password);
+            stm.setString(3, provider);
+            stm.setString(4, userId);
 
-            return statement.executeUpdate(cmd);
+            return stm.executeUpdate();
         }
     }
 
-    public int updateUser(String userId, String name, String value) throws Exception {
+    public int updateCookie(String userId, String value) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            String cmd = String.format("UPDATE User SET " +
-                            "%s = '%s' " +
-                            "WHERE UserId = '%s'",
-                    name,
-                    value,
-                    userId);
-
-            return statement.executeUpdate(cmd);
+            String cmd = "UPDATE User SET cookie = ? WHERE UserId = ?";
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, value);
+            stm.setString(2, userId);
+            return stm.executeUpdate();
         }
     }
 
@@ -127,9 +123,7 @@ public class Manager {
     public int insertService() throws Exception {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
-
-            if (statement.executeUpdate("INSERT INTO Service(Name) VALUES(null)") != 1)
-                throw new Exception("Unable to insert new promo");
+            statement.executeUpdate("INSERT INTO Service(Name) VALUES(null)");
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
@@ -160,15 +154,11 @@ public class Manager {
 
     public int updateService(int id, String name, String value) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            String cmd = String.format("UPDATE Service SET " +
-                            "%s = '%s' WHERE id = %d",
-                    name,
-                    value,
-                    id);
-
-            return statement.executeUpdate(cmd);
+            String cmd = String.format("UPDATE Service SET %s = ? WHERE id = ?", name);
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, value);
+            stm.setInt(2, id);
+            return stm.executeUpdate();
         }
     }
 
