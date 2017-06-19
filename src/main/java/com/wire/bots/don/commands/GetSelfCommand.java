@@ -13,12 +13,10 @@ import com.wire.bots.sdk.WireClient;
  * Time: 23:38
  */
 public class GetSelfCommand extends Command {
-    public GetSelfCommand(WireClient client, String userId, Manager db) throws Exception {
+    GetSelfCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        if (!isAuthenticated()) {
-            authenticate();
-        }
+        authenticate();
 
         String cookie = getUser().cookie;
         Provider provider = providerClient.getProvider(cookie);

@@ -16,24 +16,24 @@ public class DefaultCommand extends Command {
 
         try {
             if (text.startsWith("update bot")) {
-                String serviceName = getParams(text.substring("update bot".length()));
+                String serviceName = getParams(text.substring("update bot" .length()));
                 return new UpdateServiceCommand(client, userId, db, serviceName);
             }
 
             if (text.startsWith("enable bot")) {
-                String serviceName = getParams(text.substring("enable bot".length()));
+                String serviceName = getParams(text.substring("enable bot" .length()));
                 new EnableServiceCommand(client, userId, db, serviceName);
                 return def();
             }
 
             if (text.startsWith("show bot")) {
-                String botName = getParams(text.substring("show bot".length()));
+                String botName = getParams(text.substring("show bot" .length()));
                 new GetBotCommand(client, userId, db, botName);
                 return def();
             }
 
             if (text.startsWith("delete bot")) {
-                String botName = getParams(text.substring("delete bot".length()));
+                String botName = getParams(text.substring("delete bot" .length()));
                 new DeleteBotCommand(client, userId, db, botName);
                 return def();
             }
@@ -56,8 +56,12 @@ public class DefaultCommand extends Command {
                 return new NewServiceCommand(client, userId, db);
             }
 
+            if (text.startsWith("create public channel")) {
+                return new NewChannelCommand(client, userId, db);
+            }
+
             if (text.startsWith("search bot")) {
-                String botName = getParams(text.substring("search bot".length()));
+                String botName = getParams(text.substring("search bot" .length()));
                 new SearchCommand(client, userId, db, botName);
                 return def();
             }
@@ -66,12 +70,13 @@ public class DefaultCommand extends Command {
                     "You don't offer friendship. " +
                     "You don't even think to call me: \"Don\"");
             client.sendText("\nUsage:\nregister\nget self\ncreate bot\nlist my bots" +
-                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>");
+                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>\n" +
+                    "create public channel");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());
             client.sendText("Not registered yet");
         } catch (FailedAuthenticationException e) {
-            Logger.info(e.getMessage() + ". BotId: " + botId);
+            Logger.info("%s. BotId: %s", e.getMessage(), botId);
             client.sendText("Authentication failed");
         } catch (AlreadyRegisteredException e) {
             Logger.info(e.getMessage());
@@ -82,9 +87,13 @@ public class DefaultCommand extends Command {
         } catch (UnknownBotException e) {
             Logger.info(e.getMessage());
             client.sendText(e.getMessage());
+        } catch (TooManyBotsException e) {
+            Logger.warning(e.getMessage());
+            client.sendText(e.getMessage());
         } catch (Exception e) {
-            Logger.info(e.getMessage() + ". BotId: " + botId);
-            client.sendText("Something went terribly wrong. Please try again.\n" + e.getMessage());
+            Logger.error("%s. BotId: %s", e.getMessage(), botId);
+            client.sendText(e.getMessage());
+            client.sendText("\nPlease try again.");
             deleteCookie();
         }
         return def();

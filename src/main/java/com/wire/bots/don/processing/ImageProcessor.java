@@ -15,7 +15,7 @@ public class ImageProcessor {
     }
 
     public static Picture getSmallImage(Picture original) throws Exception {
-        return getScaledImage(original, 128);
+        return getScaledImage(original, 2896);
     }
 
     private static class Size {

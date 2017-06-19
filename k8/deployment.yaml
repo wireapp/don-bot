@@ -35,6 +35,12 @@ spec:
                   name: don-knows
                   key: keystore_password
 
+            - name: CHANNEL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: channel-knows
+                  key: app_secret
+
           volumeMounts:
             - name: don-disk
               mountPath: /var/lib/don/crypto
@@ -46,6 +52,9 @@ spec:
             - "/usr/bin/java"
             - "-Ddw.server.applicationConnectors[1].keyStorePassword=$(KEYSTORE_PASSWORD)"
             - "-Ddw.auth=$(TOKEN)"
+            - "-Ddw.channel.secret=$(CHANNEL_SECRET)"
+            - "-Ddw.channel.channelUrl=http://channel-local.default.svc.cluster.local"
+            - "-Ddw.channel.publicIP=35.187.36.97"
             - "-jar"
             - "don.jar"
             - "server"
@@ -62,7 +71,6 @@ spec:
             name: don-config
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

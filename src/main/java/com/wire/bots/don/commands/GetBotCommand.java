@@ -16,12 +16,10 @@ import java.util.ArrayList;
  * Time: 17:21
  */
 public class GetBotCommand extends Command {
-    public GetBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
+    GetBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
         super(client, userId, db);
 
-        if (!isAuthenticated()) {
-            authenticate();
-        }
+        authenticate();
 
         String cookie = getUser().cookie;
         ArrayList<Service> services = providerClient.listServices(cookie);

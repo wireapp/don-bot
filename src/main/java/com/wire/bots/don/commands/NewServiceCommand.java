@@ -2,6 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.Service;
+import com.wire.bots.don.exceptions.TooManyBotsException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
 import com.wire.bots.sdk.Logger;
@@ -12,12 +13,14 @@ import java.util.ArrayList;
 public class NewServiceCommand extends Command {
     private final int serviceId;
 
-    public NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
+    NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        if (!isAuthenticated()) {
-            authenticate();
-        }
+        authenticate();
+
+        ArrayList<com.wire.bots.don.model.Service> services = providerClient.listServices(getUser().cookie);
+        if (services.size() >= 10)
+            throw new TooManyBotsException("You have too many bots already. Try deleting some that are not in use");
 
         client.sendText("What should we call this bot?");
 

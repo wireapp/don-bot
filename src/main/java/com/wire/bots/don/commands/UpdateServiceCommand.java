@@ -19,7 +19,7 @@ public class UpdateServiceCommand extends Command {
     private final int id;
     private final String cookie;
 
-    protected UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
         super(client, userId, db);
 
         id = db.insertService();
@@ -39,7 +39,7 @@ public class UpdateServiceCommand extends Command {
         db.updateService(id, "serviceId", serviceId);
         db.updateService(id, "name", serviceName);
 
-        String txt = String.format("What do you want to change? (%s, %s, %s, %s, %s)?"
+        String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`)?"
                 , URL
                 , TOKEN
                 , PUBKEY
@@ -55,7 +55,7 @@ public class UpdateServiceCommand extends Command {
         if (service.field == null) {
             service.field = text.toLowerCase();
             if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` `%s` `%s` `%s` `%s`"
+                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s`"
                         , URL
                         , TOKEN
                         , PUBKEY
@@ -76,10 +76,10 @@ public class UpdateServiceCommand extends Command {
 
         String value = text;
 
-        String url = service.field.equals(URL) ? value.toLowerCase() : null;
-        String[] tokens = service.field.equals(TOKEN) ? new String[]{value} : null;
-        String[] pubkeys = service.field.equals(PUBKEY) ? new String[]{value} : null;
-        String description = service.field.equals(DESCRIPTION) ? value : null;
+        String url = service.field.equalsIgnoreCase(URL) ? value.toLowerCase() : null;
+        String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
+        String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
+        String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
 
         ArrayList<Asset> assets = null;
         if (PROFILE_PICTURE.contains(service.field)) {

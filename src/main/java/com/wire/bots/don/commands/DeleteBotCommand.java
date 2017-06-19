@@ -2,6 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.Don;
 import com.wire.bots.don.clients.AdminClient;
+import com.wire.bots.don.clients.PublicChannelClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Service;
@@ -12,7 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class DeleteBotCommand extends Command {
-    public DeleteBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
+    DeleteBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
         super(client, userId, db);
 
         if (!isAuthenticated()) {
@@ -27,15 +28,18 @@ public class DeleteBotCommand extends Command {
             if (s.name.compareToIgnoreCase(botName) == 0) {
                 providerClient.deleteService(cookie, password, s.id);
 
-                File file = new File(String.format("%s/don/.admin", Don.config.cryptoDir));
+                File file = new File(Don.config.getPathAdmin());
                 String admin = Util.readLine(file);
 
                 String clean = s.name.replaceAll("[^A-Za-z0-9]", "");
 
-                AdminClient adminClient = new AdminClient();
-                adminClient.deleteLink(clean, admin);
+                AdminClient.deleteLink(clean, admin);
 
-                client.sendText("Deleted " + s.name);
+                boolean deleteChannel = PublicChannelClient.deleteChannel(clean, user.id, s.auth_tokens[0]);
+
+                String txt = deleteChannel ? String.format("Deleted channel: **%s**", s.name)
+                        : String.format("Deleted bot: **%s**", s.name);
+                client.sendText(txt);
                 return;
             }
         }
