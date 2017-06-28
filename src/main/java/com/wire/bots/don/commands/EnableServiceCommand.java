@@ -2,7 +2,6 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.Don;
 import com.wire.bots.don.clients.AdminClient;
-import com.wire.bots.don.clients.SslClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Service;
@@ -46,12 +45,6 @@ public class EnableServiceCommand extends Command {
                         String msg = "Failed to create the invite link :(";
                         client.sendText(msg);
                         Logger.error(msg);
-                    }
-
-                    if (!SslClient.verifyService(s)) {
-                        String msg = String.format("Failed to query: %s.\nMake sure your service is running and this url is visible",
-                                s.url + "/bots/status");
-                        client.sendText(msg);
                     }
                 } else {
                     String msg = "Failed to enable bot " + s.name;
