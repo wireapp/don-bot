@@ -16,24 +16,24 @@ public class DefaultCommand extends Command {
 
         try {
             if (text.startsWith("update bot")) {
-                String serviceName = getParams(text.substring("update bot" .length()));
+                String serviceName = getParams(text.substring("update bot".length()));
                 return new UpdateServiceCommand(client, userId, db, serviceName);
             }
 
             if (text.startsWith("enable bot")) {
-                String serviceName = getParams(text.substring("enable bot" .length()));
+                String serviceName = getParams(text.substring("enable bot".length()));
                 new EnableServiceCommand(client, userId, db, serviceName);
                 return def();
             }
 
             if (text.startsWith("show bot")) {
-                String botName = getParams(text.substring("show bot" .length()));
+                String botName = getParams(text.substring("show bot".length()));
                 new GetBotCommand(client, userId, db, botName);
                 return def();
             }
 
             if (text.startsWith("delete bot")) {
-                String botName = getParams(text.substring("delete bot" .length()));
+                String botName = getParams(text.substring("delete bot".length()));
                 new DeleteBotCommand(client, userId, db, botName);
                 return def();
             }
@@ -60,8 +60,14 @@ public class DefaultCommand extends Command {
                 return new NewChannelCommand(client, userId, db);
             }
 
+            if (text.startsWith("test bot")) {
+                String botName = getParams(text.substring("test bot".length()));
+                new TestBotCommand(client, userId, db, botName);
+                return def();
+            }
+
             if (text.startsWith("search bot")) {
-                String botName = getParams(text.substring("search bot" .length()));
+                String botName = getParams(text.substring("search bot".length()));
                 new SearchCommand(client, userId, db, botName);
                 return def();
             }
@@ -70,7 +76,7 @@ public class DefaultCommand extends Command {
                     "You don't offer friendship. " +
                     "You don't even think to call me: \"Don\"");
             client.sendText("\nUsage:\nregister\nget self\ncreate bot\nlist my bots" +
-                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>\n" +
+                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>\ntest bot <name>\n" +
                     "create public channel");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());

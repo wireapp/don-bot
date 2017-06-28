@@ -15,6 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Service {
+    public PubKey[] public_keys;
     public String name;
     @JsonProperty("base_url")
     public String url;
