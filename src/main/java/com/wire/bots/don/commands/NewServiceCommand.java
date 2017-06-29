@@ -61,17 +61,10 @@ public class NewServiceCommand extends Command {
         }
 
         String pubkey = text;
-        if (!pubkey.startsWith("-----BEGIN PUBLIC KEY-----")) {
+        if (!pubkey.startsWith("-----BEGIN PUBLIC KEY-----") || !pubkey.endsWith("-----END PUBLIC KEY-----")) {
             client.sendText("Please, specify a valid public key");
             return this;
         }
-
-        if (!pubkey.endsWith("-----END PUBLIC KEY-----")) {
-            client.sendText("Please, specify a valid public key");
-            return this;
-        }
-
-        client.sendText("OK. Here we go...");
 
         try {
             String cookie = getUser().cookie;

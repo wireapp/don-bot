@@ -4,14 +4,15 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.wire.bots.don.model.NewBot;
 import com.wire.bots.don.model.NewBotResponseModel;
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.server.model.Conversation;
 import com.wire.bots.sdk.server.model.Member;
 import com.wire.bots.sdk.server.model.User;
 import org.glassfish.jersey.client.ClientConfig;
 import sun.misc.BASE64Decoder;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -63,13 +64,12 @@ public class SslClient implements Closeable {
                     public void checkServerTrusted(X509Certificate[] chain, String authType)
                             throws CertificateException {
 
-                        boolean ok = false;
                         for (X509Certificate cert : chain) {
-                            ok = ok || cert.getPublicKey().equals(pubKey);
+                            if (cert.getPublicKey().equals(pubKey))
+                                return;
                         }
 
-                        if (!ok)
-                            throw new CertificateException();
+                        throw new CertificateException();
                     }
 
                     @Override
@@ -103,14 +103,17 @@ public class SslClient implements Closeable {
         Response response = client.target(service.url).
                 path("bots").
                 request(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON).
                 header("Authorization", "Bearer " + service.auth_tokens[0]).
                 post(Entity.entity(bot, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() >= 300) {
             String msg = response.readEntity(String.class);
-            Logger.warning(msg);
             return response.getStatusInfo().getReasonPhrase() + " " + msg;
         }
+
+        if (!response.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE))
+            return "Wrong media type: " + response.getMediaType();
 
         NewBotResponseModel newBot = response.readEntity(NewBotResponseModel.class);
         if (newBot.preKeys.isEmpty())
