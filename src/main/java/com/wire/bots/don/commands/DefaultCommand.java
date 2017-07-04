@@ -97,9 +97,9 @@ public class DefaultCommand extends Command {
             Logger.warning(e.getMessage());
             client.sendText(e.getMessage());
         } catch (Exception e) {
-            Logger.error("%s. BotId: %s", e.getMessage(), botId);
-            client.sendText(e.getMessage());
-            client.sendText("\nPlease try again.");
+            String format = String.format("BotId: %s, Error: %s", botId, e.getLocalizedMessage());
+            e.printStackTrace();
+            client.sendText(format);
             deleteCookie();
         }
         return def();

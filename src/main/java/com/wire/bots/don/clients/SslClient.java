@@ -69,7 +69,7 @@ public class SslClient implements Closeable {
                                 return;
                         }
 
-                        throw new CertificateException();
+                        throw new CertificateException("Invalid RSA Public key");
                     }
 
                     @Override
@@ -109,11 +109,12 @@ public class SslClient implements Closeable {
 
         if (response.getStatus() >= 300) {
             String msg = response.readEntity(String.class);
-            return response.getStatusInfo().getReasonPhrase() + " " + msg;
+            return String.format("Error testing your bot: Status: %d, Server error: %s",
+                    response.getStatus(), msg);
         }
 
-        if (!response.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE))
-            return "Wrong media type: " + response.getMediaType();
+        if (response.getMediaType() == null || !response.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE))
+            return String.format("Wrong media type: %s", response.getMediaType());
 
         NewBotResponseModel newBot = response.readEntity(NewBotResponseModel.class);
         if (newBot.preKeys.isEmpty())
