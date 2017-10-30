@@ -1,14 +1,15 @@
 package com.wire.bots.don;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wire.bots.sdk.Configuration;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DonConfig extends Configuration {
     private String botName = "Dev Bot";
     private int accentColour;
     private String smallProfile;
     private String bigProfile;
     private String pathPubKey;
-    private String pathAdmin;
     private Channel channel;
 
     public Channel getChannel() {
@@ -33,10 +34,6 @@ public class DonConfig extends Configuration {
 
     public String getPathPubKey() {
         return pathPubKey;
-    }
-
-    public String getPathAdmin() {
-        return pathAdmin;
     }
 
     public static class Channel {

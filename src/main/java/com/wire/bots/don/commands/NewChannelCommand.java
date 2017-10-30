@@ -1,7 +1,6 @@
 package com.wire.bots.don.commands;
 
 import com.wire.bots.don.Don;
-import com.wire.bots.don.clients.AdminClient;
 import com.wire.bots.don.clients.PublicChannelClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
@@ -25,7 +24,7 @@ public class NewChannelCommand extends Command {
         }
 
         ArrayList<Service> services = providerClient.listServices(getUser().cookie);
-        if(services.size() >= 10)
+        if (services.size() >= 10)
             throw new TooManyBotsException("You have too many bots already. Try deleting some that are not in use");
 
         client.sendText("What should we call this channel?");
@@ -67,20 +66,12 @@ public class NewChannelCommand extends Command {
 
             providerClient.enableService(cookie, user.password, result.id);
 
-            File file = new File(Don.config.getPathAdmin());
-            String admin = Util.readLine(file);
+            String link = com.wire.bots.don.Util.getInviteLink(name, user.provider, result.id);
 
-            String link = AdminClient.generateInviteLink(name, user.provider, result.id, description, admin);
-            if (link != null) {
-                String msg = String.format("Public channel: `%s` created. Click here: %s to subscribe.",
-                        name,
-                        link);
-                client.sendText(msg);
-            } else {
-                String msg = "Failed to create the invite link :(";
-                client.sendText(msg);
-                Logger.error(msg);
-            }
+            String msg = String.format("Public channel: `%s` created. Click here: %s to subscribe.",
+                    name,
+                    link);
+            client.sendText(msg);
         } catch (Exception e) {
             client.sendText(e.getMessage());
             e.printStackTrace();

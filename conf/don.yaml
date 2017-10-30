@@ -17,4 +17,3 @@ server:
 
 cryptoDir: /var/lib/don/crypto  # path to dir where to store crypto box files - directory must exists!
 pathPubKey: '/etc/don/pubkey.pem'
-pathAdmin: '/etc/don/.admin'
