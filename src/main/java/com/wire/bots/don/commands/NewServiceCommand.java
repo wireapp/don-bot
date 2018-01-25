@@ -60,7 +60,7 @@ public class NewServiceCommand extends Command {
             return this;
         }
 
-        String pubkey = text;
+        String pubkey = text.trim();
         if (!pubkey.startsWith("-----BEGIN PUBLIC KEY-----") || !pubkey.endsWith("-----END PUBLIC KEY-----")) {
             client.sendText("Please, specify a valid public key");
             return this;

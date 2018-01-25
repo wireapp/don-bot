@@ -6,42 +6,17 @@ import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.MessageHandlerBase;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.models.TextMessage;
+import com.wire.bots.sdk.server.model.Member;
 import com.wire.bots.sdk.server.model.NewBot;
 import io.dropwizard.setup.Environment;
 
 public class MessageHandler extends MessageHandlerBase {
     private final Don don;
     private final MetricRegistry metrics;
-    private final DonConfig config;
 
-    public MessageHandler(DonConfig config, Environment env) {
-        this.config = config;
+    MessageHandler(DonConfig config, Environment env) {
         don = new Don(config);
         metrics = env.metrics();
-    }
-
-    @Override
-    public String getName() {
-        return config.getBotName();
-    }
-
-    @Override
-    public int getAccentColour() {
-        return config.getAccentColour();
-    }
-
-    /**
-     * @return Asset key for the small profile picture. If NULL is returned the default key will be used
-     */
-    public String getSmallProfilePicture() {
-        return config.getSmallProfile();
-    }
-
-    /**
-     * @return Asset key for the big profile picture. If NULL is returned the default key will be used
-     */
-    public String getBigProfilePicture() {
-        return config.getBigProfile();
     }
 
     @Override
@@ -52,6 +27,15 @@ public class MessageHandler extends MessageHandlerBase {
                     newBot.origin.id,
                     newBot.origin.name,
                     newBot.locale));
+
+            for (Member member : newBot.conversation.members) {
+                if (member.service != null) {
+                    Logger.warning("Rejecting NewBot. Provider: %s service: %s",
+                            member.service.provider,
+                            member.service.id);
+                    return false; // we don't want to be in a conv if other bots are there.
+                }
+            }
 
             return don.onNewBot(newBot.origin.id, newBot.origin.name);
         } catch (Exception e) {
@@ -74,11 +58,6 @@ public class MessageHandler extends MessageHandlerBase {
     @Override
     public void onText(WireClient client, TextMessage msg) {
         try {
-            Logger.info(String.format("onText: bot: %s, from: %s. Txt: %s",
-                    client.getId(),
-                    msg.getUserId(),
-                    msg.getText()));
-
             don.onMessage(client, msg);
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,18 +2,11 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
-    - type: https
-      port: 443
-      keyStorePath: keystore.jks
-      certAlias: myservercert
-      validateCerts: false
-      validatePeers: false
 
-  adminConnectors:
-    - type: http
-      port: 8081
   requestLog:
     appenders: []
 
-cryptoDir: /var/lib/don/crypto  # path to dir where to store crypto box files - directory must exists!
-pathPubKey: '/etc/don/pubkey.pem'
+auth: "your_token" # CHANGE THIS! Put your Service auth token here
+cryptoDir: /var/lib/don/crypto  # path to dir where to store crypto box files
+pathPubKey: '/etc/don/pubkey.pem' # for the channels - not in use right now
+botName: Don

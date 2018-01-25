@@ -29,44 +29,49 @@ spec:
                   name: don-knows
                   key: token
 
-            - name: KEYSTORE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: don-knows
-                  key: keystore_password
+          ports:
+            - containerPort: 8080
+              protocol: TCP
 
-            - name: CHANNEL_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: channel-knows
-                  key: app_secret
+          livenessProbe:
+            httpGet:
+              path: /bots/status
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 10
+
+          # for L7 LB
+          readinessProbe:
+            httpGet:
+              path: /bots/status
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 60
 
           volumeMounts:
-            - name: don-disk
+            - name: disk
               mountPath: /var/lib/don/crypto
 
-            - name: don-config
+            - name: config
               mountPath: /etc/don
 
           command:
             - "/usr/bin/java"
-            - "-Ddw.server.applicationConnectors[1].keyStorePassword=$(KEYSTORE_PASSWORD)"
             - "-Ddw.auth=$(TOKEN)"
-            - "-Ddw.channel.secret=$(CHANNEL_SECRET)"
-            - "-Ddw.channel.channelUrl=http://channel-local.default.svc.cluster.local"
-            - "-Ddw.channel.publicIP=35.187.36.97"
             - "-jar"
             - "don.jar"
             - "server"
             - "/etc/don/don.yaml"
 
       volumes:
-        - name: don-disk
+        - name: disk
           gcePersistentDisk:
             pdName: don-disk
             fsType: ext4
 
-        - name: don-config
+        - name: config
           configMap:
             name: don-config
 
@@ -78,8 +83,9 @@ metadata:
 spec:
   selector:
     name: don
-  type: LoadBalancer
+  type: NodePort
   ports:
-    - name: https
-      port: 443
+    - name: http
+      port: 80
+      targetPort: 8080
       protocol: TCP

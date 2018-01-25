@@ -27,7 +27,7 @@ public class ProviderClient {
 
     static {
         String env = System.getProperty("env", "prod");
-        String domain = env.equals("prod") ? "wire.com" : "zinfra.io"; //fixme: remove zinfra
+        String domain = env.equals("prod") ? "wire.com" : "zinfra.io";
         httpUrl = String.format("https://%s-nginz-https.%s", env, domain);
 
         ClientConfig cfg = new ClientConfig(JacksonJsonProvider.class);
@@ -54,7 +54,7 @@ public class ProviderClient {
         return response.readEntity(Auth.class);
     }
 
-    public String authenticate(String email, String password) throws FailedAuthenticationException {
+    public String login(String email, String password) throws FailedAuthenticationException {
         Auth auth = new Auth();
         auth.email = email;
         auth.password = password;
@@ -66,7 +66,8 @@ public class ProviderClient {
 
         if (response.getStatus() != 200) {
             String msg = response.readEntity(String.class);
-            throw new FailedAuthenticationException(msg);
+            Logger.info("Login for: %s failed: %s", email, msg);
+            throw new FailedAuthenticationException("Wrong email or password");
         }
 
         return response.getCookies().get("zprovider").toString();

@@ -45,10 +45,13 @@ public abstract class Command {
 
     protected void authenticate() throws Exception {
         User user = getUser();
-        if (user.password != null && user.email != null) {
-            String cookie = providerClient.authenticate(user.email, user.password);
+        if (user.cookie != null)
+            return;
+
+        try {
+            String cookie = providerClient.login(user.email, user.password);
             db.updateCookie(userId, cookie);
-        } else {
+        } catch (Exception e) {
             throw new NotRegisteredException(userId);
         }
     }

@@ -15,6 +15,10 @@ public class DefaultCommand extends Command {
         text = text.toLowerCase();
 
         try {
+            if (text.startsWith("login")) {
+                return new LoginCommand(client, userId, db);
+            }
+
             if (text.startsWith("update bot")) {
                 String serviceName = getParams(text.substring("update bot".length()));
                 return new UpdateServiceCommand(client, userId, db, serviceName);
@@ -56,10 +60,6 @@ public class DefaultCommand extends Command {
                 return new NewServiceCommand(client, userId, db);
             }
 
-            if (text.startsWith("create public channel")) {
-                return new NewChannelCommand(client, userId, db);
-            }
-
             if (text.startsWith("test bot")) {
                 String botName = getParams(text.substring("test bot".length()));
                 new TestBotCommand(client, userId, db, botName);
@@ -72,15 +72,24 @@ public class DefaultCommand extends Command {
                 return def();
             }
 
-            client.sendText("You come to me asking for moar bots.\nBut you don't ask with respect. " +
-                    "You don't offer friendship. " +
-                    "You don't even think to call me: \"Don\"");
-            client.sendText("\nUsage:\nregister\nget self\ncreate bot\nlist my bots" +
-                    "\nshow bot <name>\nupdate bot <name>\ndelete bot <name>\nenable bot <name>\ntest bot <name>\n" +
-                    "create public channel");
+            client.sendText("You come to me asking for moar bots.\n" +
+                    "But you don't ask with respect. \n" +
+                    "You don't offer friendship. \n" +
+                    "You don't even think to call me: **Don**\n");
+            client.sendText("Here's the usage:\n" +
+                    "register\n" +
+                    "login\n" +
+                    "get self\n" +
+                    "create bot\n" +
+                    "list my bots\n" +
+                    "show bot <name>\n" +
+                    "update bot <name>\n" +
+                    "delete bot <name>\n" +
+                    "enable bot <name>\n" +
+                    "test bot <name>");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());
-            client.sendText("Not registered yet");
+            client.sendText("You need to be registered or logged in first");
         } catch (FailedAuthenticationException e) {
             Logger.info("%s. BotId: %s", e.getMessage(), botId);
             client.sendText("Authentication failed");
@@ -97,7 +106,7 @@ public class DefaultCommand extends Command {
             Logger.warning(e.getMessage());
             client.sendText(e.getMessage());
         } catch (Exception e) {
-            String format = String.format("BotId: %s, Error: %s", botId, e.getLocalizedMessage());
+            String format = String.format("Please retry\nError: %s", e.getLocalizedMessage());
             e.printStackTrace();
             client.sendText(format);
             deleteCookie();

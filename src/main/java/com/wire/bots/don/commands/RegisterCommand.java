@@ -9,7 +9,7 @@ import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
 
 public class RegisterCommand extends Command {
-    public RegisterCommand(WireClient client, String userId, Manager db) throws Exception {
+    RegisterCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
         if (isAuthenticated()) {

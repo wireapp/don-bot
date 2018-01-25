@@ -1,6 +1,5 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.clients.PublicChannelClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Service;
@@ -24,7 +23,7 @@ public class DeleteBotCommand extends Command {
             if (s.name.compareToIgnoreCase(botName) == 0) {
                 providerClient.deleteService(cookie, password, s.id);
 
-                boolean deleteChannel = PublicChannelClient.deleteChannel(s.name, user.id, s.auth_tokens[0]);
+                boolean deleteChannel = false;//PublicChannelClient.deleteChannel(s.name, user.id, s.auth_tokens[0]);
 
                 String txt = deleteChannel ? String.format("Deleted channel: **%s**", s.name)
                         : String.format("Deleted bot: **%s**", s.name);

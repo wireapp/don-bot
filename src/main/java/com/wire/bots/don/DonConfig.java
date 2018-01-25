@@ -5,16 +5,16 @@ import com.wire.bots.sdk.Configuration;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DonConfig extends Configuration {
-    private String botName = "Dev Bot";
+    private String botName = "Don";
     private int accentColour;
     private String smallProfile;
     private String bigProfile;
-    private String pathPubKey;
-    private Channel channel;
+//    private String pathPubKey;
+//    private Channel channel;
 
-    public Channel getChannel() {
-        return channel;
-    }
+//    public Channel getChannel() {
+//        return channel;
+//    }
 
     public String getBotName() {
         return botName;
@@ -32,25 +32,25 @@ public class DonConfig extends Configuration {
         return bigProfile;
     }
 
-    public String getPathPubKey() {
-        return pathPubKey;
-    }
-
-    public static class Channel {
-        private String channelUrl;
-        private String secret;
-        private String publicIP;
-
-        public String getChannelUrl() {
-            return channelUrl;
-        }
-
-        public String getSecret() {
-            return secret;
-        }
-
-        public String getPublicIP() {
-            return publicIP;
-        }
-    }
+//    public String getPathPubKey() {
+//        return pathPubKey;
+//    }
+//
+//    public static class Channel {
+//        private String channelUrl;
+//        private String secret;
+//        private String publicIP;
+//
+//        public String getChannelUrl() {
+//            return channelUrl;
+//        }
+//
+//        public String getSecret() {
+//            return secret;
+//        }
+//
+//        public String getPublicIP() {
+//            return publicIP;
+//        }
+//    }
 }
