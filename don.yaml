@@ -7,6 +7,4 @@ server:
     appenders: []
 
 auth: "your_token" # CHANGE THIS! Put your Service auth token here
-cryptoDir: /var/lib/don/crypto  # path to dir where to store crypto box files
-pathPubKey: '/etc/don/pubkey.pem' # for the channels - not in use right now
-botName: Don
+cryptoDir: ./data  # path to dir where to store crypto box files

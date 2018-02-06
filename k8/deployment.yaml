@@ -3,6 +3,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: don
+  namespace: prod
 spec:
   replicas: 1
   template:
@@ -26,7 +27,7 @@ spec:
             - name: TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: don-knows
+                  name: don
                   key: token
 
           ports:
@@ -54,12 +55,10 @@ spec:
             - name: disk
               mountPath: /var/lib/don/crypto
 
-            - name: config
-              mountPath: /etc/don
-
           command:
             - "/usr/bin/java"
             - "-Ddw.auth=$(TOKEN)"
+            - "-Ddw.cryptoDir=/var/lib/don/crypto"
             - "-jar"
             - "don.jar"
             - "server"
@@ -71,15 +70,12 @@ spec:
             pdName: don-disk
             fsType: ext4
 
-        - name: config
-          configMap:
-            name: don-config
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: don
+  namespace: prod
 spec:
   selector:
     name: don
