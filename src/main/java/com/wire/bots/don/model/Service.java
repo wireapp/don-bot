@@ -20,6 +20,8 @@ public class Service {
     @JsonProperty("base_url")
     public String url;
     public String description;
+    @JsonProperty
+    public String summary;
     @JsonProperty("public_key")
     public String pubKey;
     public String[] tags;
@@ -31,4 +33,5 @@ public class Service {
 
     @JsonProperty
     public List<Asset> assets;
+
 }

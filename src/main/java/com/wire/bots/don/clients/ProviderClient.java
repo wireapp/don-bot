@@ -81,6 +81,7 @@ public class ProviderClient {
         service.pubKey = pubKey;
         service.url = url;
         service.description = desc;
+        service.summary = desc;
         service.tags = tags;
         service.assets = assets;
 

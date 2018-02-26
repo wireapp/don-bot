@@ -26,8 +26,7 @@ public class DefaultCommand extends Command {
 
             if (text.startsWith("enable bot")) {
                 String serviceName = getParams(text.substring("enable bot".length()));
-                new EnableServiceCommand(client, userId, db, serviceName);
-                return def();
+                return new EnableServiceCommand(client, userId, db, serviceName);
             }
 
             if (text.startsWith("show bot")) {
