@@ -7,9 +7,9 @@ import com.wire.bots.don.exceptions.NotRegisteredException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.processing.ImageLoader;
 import com.wire.bots.don.processing.ImageProcessor;
-import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.assets.Picture;
+import com.wire.bots.sdk.tools.Logger;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

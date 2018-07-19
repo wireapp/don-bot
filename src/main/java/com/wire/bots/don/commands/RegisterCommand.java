@@ -5,8 +5,8 @@ import com.wire.bots.don.db.User;
 import com.wire.bots.don.exceptions.AlreadyRegisteredException;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.Auth;
-import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
+import com.wire.bots.sdk.tools.Logger;
 
 public class RegisterCommand extends Command {
     RegisterCommand(WireClient client, String userId, Manager db) throws Exception {

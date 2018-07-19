@@ -1,22 +1,25 @@
 package com.wire.bots.don;
 
-import com.codahale.metrics.MetricRegistry;
-import com.waz.model.Messages;
-import com.wire.bots.sdk.Logger;
+import com.wire.bots.don.commands.Command;
+import com.wire.bots.don.commands.DefaultCommand;
+import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.User;
 import com.wire.bots.sdk.MessageHandlerBase;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.models.TextMessage;
 import com.wire.bots.sdk.server.model.Member;
 import com.wire.bots.sdk.server.model.NewBot;
-import io.dropwizard.setup.Environment;
+import com.wire.bots.sdk.tools.Logger;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends MessageHandlerBase {
-    private final Don don;
-    private final MetricRegistry metrics;
+    private final Manager db;
+    private final ConcurrentHashMap<String, Command> commands = new ConcurrentHashMap<>();
 
-    MessageHandler(DonConfig config, Environment env) {
-        don = new Don(config);
-        metrics = env.metrics();
+
+    MessageHandler(DonConfig config) {
+        db = new Manager(config.getPostgres());
     }
 
     @Override
@@ -37,11 +40,14 @@ public class MessageHandler extends MessageHandlerBase {
                 }
             }
 
-            return don.onNewBot(newBot.origin.id, newBot.origin.name);
+            User user = db.getUser(newBot.origin.id);
+            if (user == null)
+                db.insertUser(newBot.origin.id, newBot.origin.name);
+            return true;
         } catch (Exception e) {
             Logger.error(e.getMessage());
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -58,7 +64,10 @@ public class MessageHandler extends MessageHandlerBase {
     @Override
     public void onText(WireClient client, TextMessage msg) {
         try {
-            don.onMessage(client, msg);
+            String bot = client.getId();
+            Command command = commands.computeIfAbsent(bot, k -> new DefaultCommand(client, msg.getUserId(), db));
+
+            commands.put(bot, command.onMessage(client, msg.getText()));
         } catch (Exception e) {
             e.printStackTrace();
             try {
@@ -74,13 +83,4 @@ public class MessageHandler extends MessageHandlerBase {
         onText(client, msg);
     }
 
-    @Override
-    public void onEvent(WireClient client, String userId, Messages.GenericMessage genericMessage) {
-        if (genericMessage.hasConfirmation()) {
-            metrics.meter("engagement.delivery").mark();
-        }
-        if (genericMessage.hasText()) {
-            metrics.meter("engagement.txt.received").mark();
-        }
-    }
 }

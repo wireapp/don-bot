@@ -5,6 +5,8 @@ import com.wire.bots.sdk.Configuration;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DonConfig extends Configuration {
+    public DB postgres = new DB();
+
     private String botName = "Don";
     private int accentColour;
     private String smallProfile;
@@ -15,6 +17,11 @@ public class DonConfig extends Configuration {
 //    public Channel getChannel() {
 //        return channel;
 //    }
+
+
+    public DB getPostgres() {
+        return postgres;
+    }
 
     public String getBotName() {
         return botName;

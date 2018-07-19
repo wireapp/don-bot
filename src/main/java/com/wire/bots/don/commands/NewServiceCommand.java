@@ -5,8 +5,8 @@ import com.wire.bots.don.db.Service;
 import com.wire.bots.don.exceptions.TooManyBotsException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
-import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
+import com.wire.bots.sdk.tools.Logger;
 
 import java.util.ArrayList;
 

@@ -2,8 +2,8 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.exceptions.*;
-import com.wire.bots.sdk.Logger;
 import com.wire.bots.sdk.WireClient;
+import com.wire.bots.sdk.tools.Logger;
 
 public class DefaultCommand extends Command {
     public DefaultCommand(WireClient client, String userId, Manager db) {

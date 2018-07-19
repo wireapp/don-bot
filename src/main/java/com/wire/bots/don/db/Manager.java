@@ -1,56 +1,19 @@
 package com.wire.bots.don.db;
 
-import com.wire.bots.sdk.Logger;
+import com.wire.bots.sdk.Configuration;
 
 import java.sql.*;
 
 public class Manager {
-    private final String path;
+    private final Configuration.DB conf;
 
-    public Manager(String path) {
-        this.path = path;
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-            int update = statement.executeUpdate("CREATE TABLE IF NOT EXISTS User " +
-                    "(UserId STRING PRIMARY KEY," +
-                    " Name STRING," +
-                    " Email STRING," +
-                    " Password STRING," +
-                    " WebSite STRING," +
-                    " Description STRING," +
-                    " Cookie STRING," +
-                    " Provider STRING)");
-            if (update > 0)
-                Logger.info("CREATED TABLE User");
-
-            update = statement.executeUpdate("CREATE TABLE IF NOT EXISTS Service " +
-                    "(Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    " ServiceId STRING," +
-                    " Name STRING," +
-                    " Field STRING," +
-                    " Url STRING," +
-                    " Description STRING," +
-                    " Profile STRING)");
-            if (update > 0)
-                Logger.info("CREATED TABLE Service");
-        } catch (Exception e) {
-            e.printStackTrace();
-            Logger.error(e.getLocalizedMessage());
-        }
+    public Manager(Configuration.DB postgres) {
+        this.conf = postgres;
     }
 
     public int insertUser(String userId, String name) throws Exception {
         try (Connection connection = getConnection()) {
-            String cmd = "INSERT INTO User (UserId, Name) VALUES(?, ?)";
+            String cmd = "INSERT INTO DON_USER (UserId, Name) VALUES(?, ?)";
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, userId);
             stm.setString(2, name);
@@ -60,10 +23,10 @@ public class Manager {
 
     public User getUser(String userId) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            String cmd = String.format("SELECT * FROM User WHERE UserId = '%s'", userId);
-            ResultSet rs = statement.executeQuery(cmd);
+            String cmd = "SELECT * FROM DON_USER WHERE UserId = ?";
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, userId);
+            ResultSet rs = stm.executeQuery();
             User user = new User();
             if (rs.next()) {
                 user.id = rs.getString("UserId");
@@ -72,7 +35,6 @@ public class Manager {
                 user.password = rs.getString("password");
                 user.provider = rs.getString("provider");
                 user.cookie = rs.getString("cookie");
-
                 return user;
             }
         }
@@ -81,7 +43,7 @@ public class Manager {
 
     public int updateUser(String userId, String email, String password, String provider) throws Exception {
         try (Connection connection = getConnection()) {
-            String cmd = "UPDATE User SET " +
+            String cmd = "UPDATE DON_USER SET " +
                     "Email = ?, " +
                     "Password = ?, " +
                     "Provider = ? " +
@@ -92,16 +54,15 @@ public class Manager {
             stm.setString(2, password);
             stm.setString(3, provider);
             stm.setString(4, userId);
-
             return stm.executeUpdate();
         }
     }
 
-    public int updateCookie(String userId, String value) throws Exception {
+    public int updateCookie(String userId, String token) throws Exception {
         try (Connection connection = getConnection()) {
-            String cmd = "UPDATE User SET cookie = ? WHERE UserId = ?";
+            String cmd = "UPDATE DON_USER SET cookie = ? WHERE UserId = ?";
             PreparedStatement stm = connection.prepareStatement(cmd);
-            stm.setString(1, value);
+            stm.setString(1, token);
             stm.setString(2, userId);
             return stm.executeUpdate();
         }
@@ -109,22 +70,18 @@ public class Manager {
 
     public int deleteCookie(String userId) throws SQLException {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            String cmd = String.format("UPDATE User SET " +
-                            "cookie = null " +
-                            "WHERE UserId = '%s'",
-                    userId);
-
-            return statement.executeUpdate(cmd);
+            String cmd = "UPDATE DON_USER SET cookie = ? WHERE UserId = ?";
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setString(1, null);
+            stm.setString(2, userId);
+            return stm.executeUpdate();
         }
     }
 
     public int insertService() throws Exception {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO Service(Name) VALUES(null)");
-
+            statement.executeUpdate("INSERT INTO DON_SERVICE (Name) VALUES(null)");
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
             return generatedKeys.getInt("last_insert_rowid()");
@@ -133,11 +90,12 @@ public class Manager {
 
     public Service getService(int serviceId) throws SQLException {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-
-            ResultSet rs = statement.executeQuery("SELECT * FROM Service WHERE Id = " + serviceId);
-            Service service = new Service();
+            String cmd = "SELECT * FROM DON_SERVICE WHERE Id = ?";
+            PreparedStatement stm = connection.prepareStatement(cmd);
+            stm.setInt(1, serviceId);
+            ResultSet rs = stm.executeQuery();
             if (rs.next()) {
+                Service service = new Service();
                 service.id = rs.getInt("id");
                 service.name = rs.getString("name");
                 service.description = rs.getString("description");
@@ -145,7 +103,6 @@ public class Manager {
                 service.profile = rs.getString("profile");
                 service.serviceId = rs.getString("serviceId");
                 service.field = rs.getString("field");
-
                 return service;
             }
         }
@@ -154,7 +111,7 @@ public class Manager {
 
     public int updateService(int id, String name, String value) throws Exception {
         try (Connection connection = getConnection()) {
-            String cmd = String.format("UPDATE Service SET %s = ? WHERE id = ?", name);
+            String cmd = String.format("UPDATE DON_SERVICE SET %s = ? WHERE id = ?", name);
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, value);
             stm.setInt(2, id);
@@ -163,6 +120,10 @@ public class Manager {
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(String.format("jdbc:sqlite:%s", path));
+        String driver = conf.driver != null ? conf.driver : "postgresql";
+        String url = conf.url != null
+                ? conf.url
+                : String.format("jdbc:%s://%s:%d/%s", driver, conf.host, conf.port, conf.database);
+        return DriverManager.getConnection(url, conf.user, conf.password);
     }
 }
