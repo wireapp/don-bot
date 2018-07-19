@@ -24,7 +24,7 @@ public class NewServiceCommand extends Command {
 
         client.sendText("What should we call this bot?");
 
-        serviceId = db.insertService();
+        serviceId = db.insertService(null);
     }
 
     @Override

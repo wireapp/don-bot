@@ -22,7 +22,6 @@ public class UpdateServiceCommand extends Command {
     UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
         super(client, userId, db);
 
-        id = db.insertService();
 
         if (!isAuthenticated()) {
             authenticate();
@@ -34,6 +33,11 @@ public class UpdateServiceCommand extends Command {
 
         if (serviceId == null) {
             throw new UnknownBotException("You don't have a bot called: " + serviceName);
+        }
+
+        id = db.insertService(serviceName);
+        if (id == -1) {
+            throw new RuntimeException("Something went wrong");
         }
 
         db.updateService(id, "serviceId", serviceId);

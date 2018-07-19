@@ -78,13 +78,17 @@ public class Manager {
         }
     }
 
-    public int insertService() throws Exception {
+    public int insertService(String serviceName) throws Exception {
         try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO DON_SERVICE (Name) VALUES(null)");
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
-            return generatedKeys.getInt("last_insert_rowid()");
+            String cmd = "INSERT INTO DON_SERVICE (Name) VALUES(?)";
+            PreparedStatement stm = connection.prepareStatement(cmd, Statement.RETURN_GENERATED_KEYS);
+            stm.setString(1, serviceName);
+            stm.executeUpdate();
+            ResultSet generatedKeys = stm.getGeneratedKeys();
+            if (generatedKeys.next())
+                return generatedKeys.getInt(1);
+
+            return -1;
         }
     }
 
