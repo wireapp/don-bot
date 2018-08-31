@@ -64,6 +64,8 @@ public abstract class Command {
         ArrayList<Asset> ret = new ArrayList<>();
         try {
             Picture pic = ImageLoader.loadImage(path);
+            pic.setRetention("eternal");
+
             Picture mediumImage = ImageProcessor.getMediumImage(pic);
             Picture smallImage = ImageProcessor.getSmallImage(pic);
 

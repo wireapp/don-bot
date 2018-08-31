@@ -35,7 +35,7 @@ public class ImageLoader {
         }
     }
 
-    public static Picture loadImage(InputStream is, String mime) throws Exception {
+    private static Picture loadImage(InputStream is, String mime) throws Exception {
         byte[] bytes = Util.toByteArray(is);
         return new Picture(bytes, mime);
     }

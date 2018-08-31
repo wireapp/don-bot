@@ -10,12 +10,15 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageProcessor {
 
+    private static final int MEDIUM_DIMENSION = 2896;
+    private static final int SMALL_DIMENSION = 2896;
+
     public static Picture getMediumImage(Picture original) throws Exception {
-        return getScaledImage(original, 2896);
+        return getScaledImage(original, MEDIUM_DIMENSION);
     }
 
     public static Picture getSmallImage(Picture original) throws Exception {
-        return getScaledImage(original, 2896);
+        return getScaledImage(original, SMALL_DIMENSION);
     }
 
     private static class Size {
@@ -92,7 +95,9 @@ public class ImageProcessor {
         try (ByteArrayOutputStream resultStream = new ByteArrayOutputStream()) {
             ImageIO.write(resultImage, resultImageType, resultStream);
             resultStream.flush();
-            return new Picture(resultStream.toByteArray(), image.getMimeType());
+            Picture picture = new Picture(resultStream.toByteArray(), image.getMimeType());
+            picture.setRetention(image.getRetention());
+            return picture;
         }
     }
 }
