@@ -8,10 +8,6 @@
     <groupId>com.wire.bots</groupId>
     <version>0.3.0</version>
 
-    <properties>
-        <bot.version>2.11.6</bot.version>
-    </properties>
-
     <repositories>
         <repository>
             <id>dkovacevic-lithium</id>
@@ -29,7 +25,7 @@
         <dependency>
             <groupId>com.wire.bots</groupId>
             <artifactId>lithium</artifactId>
-            <version>${bot.version}</version>
+            <version>2.13.0</version>
         </dependency>
     </dependencies>
 
