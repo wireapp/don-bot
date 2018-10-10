@@ -37,7 +37,7 @@ public class DefaultCommand extends Command {
 
             if (text.startsWith("delete bot")) {
                 String botName = getParams(text.substring("delete bot".length()));
-                new DeleteBotCommand(client, userId, db, botName);
+                new DeleteBotCommand(client, userId, db);
                 return def();
             }
 

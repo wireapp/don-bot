@@ -11,6 +11,7 @@ import com.wire.bots.sdk.server.model.Member;
 import com.wire.bots.sdk.server.model.NewBot;
 import com.wire.bots.sdk.tools.Logger;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends MessageHandlerBase {
@@ -45,8 +46,21 @@ public class MessageHandler extends MessageHandlerBase {
                 db.insertUser(newBot.origin.id, newBot.origin.name);
             return true;
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            Logger.error("onNewBot: %s", e);
             return false;
+        }
+    }
+
+    public void onMemberJoin(WireClient client, ArrayList<String> userIds) {
+        for (String userId : userIds) {
+            try {
+                User user = db.getUser(userId);
+                if (user == null) {
+                    db.insertUser(userId, client.getUser(userId).name);
+                }
+            } catch (Exception e) {
+                Logger.error("onMemberJoin: %s", e);
+            }
         }
     }
 
@@ -57,7 +71,7 @@ public class MessageHandler extends MessageHandlerBase {
                     " I will call upon you to do a service for me. But until that day accept these bots as a " +
                     "gift from me to you.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("onNewConversation: %s", e);
         }
     }
 
@@ -69,11 +83,11 @@ public class MessageHandler extends MessageHandlerBase {
 
             commands.put(bot, command.onMessage(client, msg.getText()));
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("onText: %s", e);
             try {
                 client.sendText(e.getMessage());
             } catch (Exception e1) {
-                e1.printStackTrace();
+                Logger.error("sendText: %s", e1);
             }
         }
     }

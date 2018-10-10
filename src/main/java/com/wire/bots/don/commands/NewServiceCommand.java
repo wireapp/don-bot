@@ -85,7 +85,7 @@ public class NewServiceCommand extends Command {
             client.sendText(msg);
         } catch (Exception e) {
             client.sendText(e.getMessage());
-            e.printStackTrace();
+            Logger.error("NewServiceCommand: %s", e);
         }
         return def();
     }

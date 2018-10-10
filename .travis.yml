@@ -1,0 +1,13 @@
+sudo: 'required'
+
+language: java
+
+services:
+- docker
+
+after_success:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
+      docker build -t $DOCKER_USERNAME/don-bot:latest . ;
+      docker push $DOCKER_USERNAME/don-bot ;
+    fi
