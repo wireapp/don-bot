@@ -1,6 +1,7 @@
 package com.wire.bots.don.commands;
 
 import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.exceptions.UnknownBotException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.Service;
@@ -18,13 +19,13 @@ public class UpdateServiceCommand extends Command {
     private static final String DESCRIPTION = "description";
     private final int id;
     private final String cookie;
+    private String password;
 
     UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
         super(client, userId, db);
 
-
         if (!isAuthenticated()) {
-            authenticate();
+            throw new NotAuthenticatedException();
         }
 
         cookie = getUser().cookie;
@@ -43,17 +44,23 @@ public class UpdateServiceCommand extends Command {
         db.updateService(id, "serviceId", serviceId);
         db.updateService(id, "name", serviceName);
 
-        String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`)?"
-                , URL
-                , TOKEN
-                , PUBKEY
-                , PROFILE_PICTURE
-                , DESCRIPTION);
-        client.sendText(txt);
+        client.sendText("Please enter password one more time:");
     }
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
+        if (password == null) {
+            password = text.trim();
+            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`)?"
+                    , URL
+                    , TOKEN
+                    , PUBKEY
+                    , PROFILE_PICTURE
+                    , DESCRIPTION);
+            client.sendText(txt);
+            return this;
+        }
+
         com.wire.bots.don.db.Service service = db.getService(id);
 
         if (service.field == null) {
@@ -74,7 +81,6 @@ public class UpdateServiceCommand extends Command {
             return this;
         }
 
-        String password = getUser().password;
         String name = service.name;
         String id = service.serviceId;
 

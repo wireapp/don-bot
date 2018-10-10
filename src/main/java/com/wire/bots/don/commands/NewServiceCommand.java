@@ -2,6 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.Service;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.exceptions.TooManyBotsException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
@@ -16,7 +17,9 @@ public class NewServiceCommand extends Command {
     NewServiceCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        authenticate();
+        if (!isAuthenticated()) {
+            throw new NotAuthenticatedException();
+        }
 
         ArrayList<com.wire.bots.don.model.Service> services = providerClient.listServices(getUser().cookie);
         if (services.size() >= 10)

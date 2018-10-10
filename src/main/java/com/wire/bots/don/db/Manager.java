@@ -32,7 +32,7 @@ public class Manager {
                 user.id = rs.getString("UserId");
                 user.name = rs.getString("name");
                 user.email = rs.getString("email");
-                user.password = rs.getString("password");
+                //user.password = rs.getString("password");
                 user.provider = rs.getString("provider");
                 user.cookie = rs.getString("cookie");
                 return user;

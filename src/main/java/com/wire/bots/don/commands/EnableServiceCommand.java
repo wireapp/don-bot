@@ -3,6 +3,7 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.Util;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
@@ -18,15 +19,14 @@ public class EnableServiceCommand extends Command {
         this.serviceName = serviceName;
 
         if (!isAuthenticated()) {
-            authenticate();
+            throw new NotAuthenticatedException();
         }
 
-        client.sendText("Password:");
+        client.sendText("Please enter password one more time");
     }
 
     @Override
     public Command onMessage(WireClient client, String password) throws Exception {
-
         User user = getUser();
         String cookie = user.cookie;
 

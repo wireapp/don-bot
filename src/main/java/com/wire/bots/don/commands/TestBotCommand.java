@@ -3,6 +3,7 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.clients.SslClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
@@ -13,7 +14,7 @@ public class TestBotCommand extends Command {
         super(client, userId, db);
 
         if (!isAuthenticated()) {
-            authenticate();
+            throw new NotAuthenticatedException();
         }
 
         User user = getUser();

@@ -3,7 +3,6 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.clients.ProviderClient;
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
-import com.wire.bots.don.exceptions.NotRegisteredException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.processing.ImageLoader;
 import com.wire.bots.don.processing.ImageProcessor;
@@ -41,19 +40,6 @@ public abstract class Command {
 
     protected User getUser() throws Exception {
         return db.getUser(userId);
-    }
-
-    protected void authenticate() throws Exception {
-        User user = getUser();
-        if (user.cookie != null)
-            return;
-
-        try {
-            String cookie = providerClient.login(user.email, user.password);
-            db.updateCookie(userId, cookie);
-        } catch (Exception e) {
-            throw new NotRegisteredException(userId);
-        }
     }
 
     void deleteCookie() throws SQLException {

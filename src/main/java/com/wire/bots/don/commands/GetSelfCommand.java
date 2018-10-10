@@ -3,6 +3,7 @@ package com.wire.bots.don.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.model.Provider;
 import com.wire.bots.sdk.WireClient;
 
@@ -16,7 +17,9 @@ public class GetSelfCommand extends Command {
     GetSelfCommand(WireClient client, String userId, Manager db) throws Exception {
         super(client, userId, db);
 
-        authenticate();
+        if (!isAuthenticated()) {
+            throw new NotAuthenticatedException();
+        }
 
         String cookie = getUser().cookie;
         Provider provider = providerClient.getProvider(cookie);

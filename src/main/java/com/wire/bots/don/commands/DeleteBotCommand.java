@@ -2,6 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.wire.bots.don.db.Manager;
 import com.wire.bots.don.db.User;
+import com.wire.bots.don.exceptions.NotAuthenticatedException;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
@@ -14,7 +15,7 @@ public class DeleteBotCommand extends Command {
         super(client, userId, db);
 
         if (!isAuthenticated()) {
-            authenticate();
+            throw new NotAuthenticatedException();
         }
 
         client.sendText("Please enter password one more time:");
