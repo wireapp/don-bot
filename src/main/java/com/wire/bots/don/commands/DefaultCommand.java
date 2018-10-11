@@ -1,12 +1,12 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.exceptions.*;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
 public class DefaultCommand extends Command {
-    public DefaultCommand(WireClient client, String userId, Manager db) {
+    public DefaultCommand(WireClient client, String userId, Database db) {
         super(client, userId, db);
     }
 
@@ -88,7 +88,7 @@ public class DefaultCommand extends Command {
             Logger.info(e.getMessage());
             client.sendText("You need to be registered or logged in first");
         } catch (FailedAuthenticationException e) {
-            Logger.info("%s. BotId: %s", e.getMessage(), botId);
+            Logger.warning("%s. BotId: %s", e.getMessage(), botId);
             client.sendText("Authentication failed");
         } catch (AlreadyRegisteredException e) {
             Logger.info(e.getMessage());
@@ -96,15 +96,12 @@ public class DefaultCommand extends Command {
         } catch (MissingBotNameException e) {
             Logger.info(e.getMessage());
             client.sendText("Missing bot name");
-        } catch (UnknownBotException e) {
+        } catch (UnknownBotException | TooManyBotsException e) {
             Logger.info(e.getMessage());
-            client.sendText(e.getMessage());
-        } catch (TooManyBotsException e) {
-            Logger.warning(e.getMessage());
             client.sendText(e.getMessage());
         } catch (Exception e) {
             String format = String.format("Please retry\nError: %s", e.getLocalizedMessage());
-            e.printStackTrace();
+            Logger.error("Something went wrong: %s", e);
             client.sendText(format);
             deleteCookie();
         }

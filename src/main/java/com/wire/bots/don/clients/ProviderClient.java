@@ -35,11 +35,12 @@ public class ProviderClient {
         client = JerseyClientBuilder.createClient(cfg);
     }
 
-    public Auth register(String name, String email, String url, String desc)
-            throws IOException, FailedRegistrationException {
+    public Auth register(String name, String email, String password, String url, String desc)
+            throws FailedRegistrationException {
         Provider provider = new Provider();
         provider.name = name;
         provider.email = email;
+        provider.password = password;
         provider.url = url;
         provider.description = desc;
 

@@ -2,7 +2,7 @@ package com.wire.bots.don;
 
 import com.wire.bots.don.commands.Command;
 import com.wire.bots.don.commands.DefaultCommand;
-import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.db.User;
 import com.wire.bots.sdk.MessageHandlerBase;
 import com.wire.bots.sdk.WireClient;
@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends MessageHandlerBase {
-    private final Manager db;
+    private final Database db;
     private final ConcurrentHashMap<String, Command> commands = new ConcurrentHashMap<>();
 
 
     MessageHandler(DonConfig config) {
-        db = new Manager(config.getPostgres());
+        db = new Database(config.getPostgres());
     }
 
     @Override

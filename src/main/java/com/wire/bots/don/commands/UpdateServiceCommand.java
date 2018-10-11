@@ -1,7 +1,6 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Manager;
-import com.wire.bots.don.exceptions.NotAuthenticatedException;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.exceptions.UnknownBotException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.Service;
@@ -21,12 +20,8 @@ public class UpdateServiceCommand extends Command {
     private final String cookie;
     private String password;
 
-    UpdateServiceCommand(WireClient client, String userId, Manager db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, String userId, Database db, String serviceName) throws Exception {
         super(client, userId, db);
-
-        if (!isAuthenticated()) {
-            throw new NotAuthenticatedException();
-        }
 
         cookie = getUser().cookie;
 

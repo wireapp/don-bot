@@ -3,8 +3,7 @@ package com.wire.bots.don.commands;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wire.bots.don.db.Manager;
-import com.wire.bots.don.exceptions.NotAuthenticatedException;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
@@ -17,12 +16,8 @@ import java.util.ArrayList;
  * Time: 17:21
  */
 public class GetBotCommand extends Command {
-    GetBotCommand(WireClient client, String userId, Manager db, String botName) throws Exception {
+    GetBotCommand(WireClient client, String userId, Database db, String botName) throws Exception {
         super(client, userId, db);
-
-        if (!isAuthenticated()) {
-            throw new NotAuthenticatedException();
-        }
 
         String cookie = getUser().cookie;
         ArrayList<Service> services = providerClient.listServices(cookie);

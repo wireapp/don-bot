@@ -4,10 +4,10 @@ import com.wire.bots.sdk.Configuration;
 
 import java.sql.*;
 
-public class Manager {
+public class Database {
     private final Configuration.DB conf;
 
-    public Manager(Configuration.DB postgres) {
+    public Database(Configuration.DB postgres) {
         this.conf = postgres;
     }
 
@@ -41,19 +41,17 @@ public class Manager {
         return null;
     }
 
-    public int updateUser(String userId, String email, String password, String provider) throws Exception {
+    public int updateUser(String userId, String email, String provider) throws Exception {
         try (Connection connection = getConnection()) {
             String cmd = "UPDATE DON_USER SET " +
                     "Email = ?, " +
-                    "Password = ?, " +
                     "Provider = ? " +
                     "WHERE UserId = ?";
 
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, email);
-            stm.setString(2, password);
-            stm.setString(3, provider);
-            stm.setString(4, userId);
+            stm.setString(2, provider);
+            stm.setString(3, userId);
             return stm.executeUpdate();
         }
     }

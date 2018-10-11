@@ -2,7 +2,6 @@ CREATE TABLE IF NOT EXISTS DON_USER(
     UserId VARCHAR(255) PRIMARY KEY,
     Name VARCHAR(255),
     Email VARCHAR(255),
-    Password VARCHAR(255),
     WebSite VARCHAR(255),
     Description VARCHAR(255),
     Cookie VARCHAR(1255),

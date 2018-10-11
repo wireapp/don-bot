@@ -1,7 +1,7 @@
 package com.wire.bots.don.commands;
 
 import com.wire.bots.don.clients.ProviderClient;
-import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.processing.ImageLoader;
@@ -17,10 +17,10 @@ public abstract class Command {
     protected final WireClient client;
     protected final String userId;
     final String botId;
-    protected final Manager db;
+    protected final Database db;
     protected static ProviderClient providerClient = new ProviderClient();
 
-    protected Command(WireClient client, String userId, Manager db) {
+    protected Command(WireClient client, String userId, Database db) {
         this.client = client;
         this.userId = userId;
         botId = client.getId();

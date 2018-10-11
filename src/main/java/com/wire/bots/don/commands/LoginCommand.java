@@ -1,13 +1,13 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
 public class LoginCommand extends Command {
     private String email;
 
-    LoginCommand(WireClient client, String userId, Manager db) throws Exception {
+    LoginCommand(WireClient client, String userId, Database db) throws Exception {
         super(client, userId, db);
 
         client.sendText("Email:");

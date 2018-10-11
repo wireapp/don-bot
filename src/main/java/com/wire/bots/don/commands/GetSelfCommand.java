@@ -2,8 +2,7 @@ package com.wire.bots.don.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wire.bots.don.db.Manager;
-import com.wire.bots.don.exceptions.NotAuthenticatedException;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Provider;
 import com.wire.bots.sdk.WireClient;
 
@@ -14,12 +13,8 @@ import com.wire.bots.sdk.WireClient;
  * Time: 23:38
  */
 public class GetSelfCommand extends Command {
-    GetSelfCommand(WireClient client, String userId, Manager db) throws Exception {
+    GetSelfCommand(WireClient client, String userId, Database db) throws Exception {
         super(client, userId, db);
-
-        if (!isAuthenticated()) {
-            throw new NotAuthenticatedException();
-        }
 
         String cookie = getUser().cookie;
         Provider provider = providerClient.getProvider(cookie);
@@ -29,9 +24,8 @@ public class GetSelfCommand extends Command {
         client.sendText(mapper.writeValueAsString(provider));
     }
 
-
     @Override
-    public Command onMessage(WireClient client, String text) throws Exception {
+    public Command onMessage(WireClient client, String text) {
         return null;
     }
 }

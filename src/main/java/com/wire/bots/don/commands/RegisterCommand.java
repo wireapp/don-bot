@@ -1,30 +1,35 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Manager;
+import com.wire.bots.don.db.Database;
 import com.wire.bots.don.db.User;
-import com.wire.bots.don.exceptions.AlreadyRegisteredException;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.Auth;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
 public class RegisterCommand extends Command {
-    RegisterCommand(WireClient client, String userId, Manager db) throws Exception {
-        super(client, userId, db);
+    private String email;
 
-        if (isAuthenticated()) {
-            throw new AlreadyRegisteredException(botId);
-        }
+    RegisterCommand(WireClient client, String userId, Database db) throws Exception {
+        super(client, userId, db);
 
         client.sendText("What is your email?");
     }
 
     @Override
-    public Command onMessage(WireClient client, String email) throws Exception {
-        if (!email.contains("@") || !email.contains(".") || email.length() < 6) {
-            client.sendText("Please, specify a valid email address");
+    public Command onMessage(WireClient client, String text) throws Exception {
+        if (email == null) {
+            if (!isValidEmail(text)) {
+                client.sendText("Please, specify a valid email address");
+                return this;
+            }
+
+            email = text.trim().toLowerCase();
+            client.sendText("Enter your password:");
             return this;
         }
+
+        String password = text.trim();
 
         User user = getUser();
 
@@ -33,24 +38,29 @@ public class RegisterCommand extends Command {
                             ", email: %s",
                     botId, email);
             Logger.info(msg);
-            client.sendText("This email address was already used to register");
+            client.sendText("This email address has been already used to register");
             return def();
         }
 
         try {
-            Auth register = providerClient.register(user.name, email, "https://", "You know, for the bots");
+            String homepage = "https://";
+            String desc = "You know, for the bots";
+            Auth register = providerClient.register(user.name, email, password, homepage, desc);
 
-            db.updateUser(userId, email, register.password, register.id);
+            db.updateUser(userId, email, register.id);
 
             client.sendText("OK. I sent verification email to: " + email);
         } catch (FailedRegistrationException e) {
-            String msg = String.format("FailedRegistrationException: bot: %s, email: %s, reason: %s",
-                    botId, email, e.getMessage());
-            Logger.info(msg);
             client.sendText(e.getMessage());
+
+            String msg = String.format("FailedRegistrationException: bot: %s, email: %s, reason: %s", botId, email, e);
+            Logger.warning(msg);
         }
 
         return def();
     }
 
+    private boolean isValidEmail(String email) {
+        return email.contains("@") && email.contains(".") && email.length() >= 6;
+    }
 }
