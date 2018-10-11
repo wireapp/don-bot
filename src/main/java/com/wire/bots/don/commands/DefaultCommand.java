@@ -36,9 +36,7 @@ public class DefaultCommand extends Command {
             }
 
             if (text.startsWith("delete bot")) {
-                String botName = getParams(text.substring("delete bot".length()));
-                new DeleteBotCommand(client, userId, db);
-                return def();
+                return new DeleteBotCommand(client, userId, db);
             }
 
             if (text.startsWith("list my bots")) {
@@ -83,7 +81,7 @@ public class DefaultCommand extends Command {
                     "list my bots\n" +
                     "show bot <name>\n" +
                     "update bot <name>\n" +
-                    "delete bot <name>\n" +
+                    "delete bot\n" +
                     "enable bot <name>\n" +
                     "test bot <name>");
         } catch (NotRegisteredException e) {
