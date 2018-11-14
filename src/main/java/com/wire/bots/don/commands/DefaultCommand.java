@@ -69,6 +69,12 @@ public class DefaultCommand extends Command {
                 return def();
             }
 
+            if (text.startsWith("token")) {
+                String botName = getParams(text.substring("token".length()));
+                new GetTokenCommand(client, userId, botName, db);
+                return def();
+            }
+
             client.sendText("You come to me asking for moar bots.\n" +
                     "But you don't ask with respect. \n" +
                     "You don't offer friendship. \n" +
@@ -83,6 +89,7 @@ public class DefaultCommand extends Command {
                     "update bot <name>\n" +
                     "delete bot\n" +
                     "enable bot <name>\n" +
+                    "token <BotName>\n" +
                     "test bot <name>");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());
