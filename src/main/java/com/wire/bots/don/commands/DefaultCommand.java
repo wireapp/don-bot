@@ -107,6 +107,7 @@ public class DefaultCommand extends Command {
             Logger.info(e.getMessage());
             client.sendText(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             String format = String.format("Please retry\nError: %s", e.getLocalizedMessage());
             Logger.error("Something went wrong: %s", e);
             client.sendText(format);

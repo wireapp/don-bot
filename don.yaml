@@ -6,16 +6,27 @@ server:
   requestLog:
     appenders: []
 
-auth: ''
+auth: ${WIRE_SERVICE_TOKEN}
+
+logging:
+  level: INFO
+  loggers:
+    "com.wire.bots.sdk.tools.logger": INFO
+
+swagger:
+  resourcePackage: com.wire.bots.sdk.server.resources
+  uriPrefix: /don
+  schemes:
+    - http
+    - https
 
 postgres:
   host: localhost
   port: 5432
-  database: postgres
   driver: postgresql
-  user: postgres
-  password: password
+  user: ${POSTRES_USER}
+  password: ${POSTRES_PASSWORD}
 
 db:
     host: localhost
-    port: 6379
+    port: 6379 #redis port

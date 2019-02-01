@@ -1,13 +1,11 @@
 package com.wire.bots.don.clients;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.wire.bots.don.model.NewBot;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wire.bots.don.model.NewBotResponseModel;
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.server.model.Conversation;
-import com.wire.bots.sdk.server.model.Member;
-import com.wire.bots.sdk.server.model.User;
-import org.glassfish.jersey.client.ClientConfig;
+import com.wire.bots.sdk.server.model.NewBot;
+import com.wire.bots.sdk.tools.Logger;
+import com.wire.bots.sdk.tools.Util;
 import sun.misc.BASE64Decoder;
 
 import javax.net.ssl.SSLContext;
@@ -19,91 +17,95 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Closeable;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import java.io.IOException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 
 public class SslClient implements Closeable {
     private Client client;
     private PublicKey pubKey;
+    private MessageDigest md;
 
-    public SslClient(String key) throws Exception {
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, getCerts(), new SecureRandom());
-
-        ClientConfig config = new ClientConfig(JacksonJsonProvider.class);
-        client = ClientBuilder.newBuilder()
-                .withConfig(config)
-                .hostnameVerifier((s, sslSession) -> true)
-                .sslContext(ctx)
+    public SslClient(String pubkey) throws Exception {
+        this.md = MessageDigest.getInstance("SHA-1");
+        this.pubKey = createPublicKey(pubkey);
+        this.client = ClientBuilder
+                .newBuilder()
+                .sslContext(getSslContext())
+                .hostnameVerifier((s1, s2) -> true)
                 .build();
+    }
 
-        String pubKeyPEM = key.replace(
+    private PublicKey createPublicKey(String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        String pubKeyPEM = publicKey.replace(
                 "-----BEGIN PUBLIC KEY-----\n", "")
                 .replace("-----END PUBLIC KEY-----", "");
         BASE64Decoder decoder = new BASE64Decoder();
         byte[] data = decoder.decodeBuffer(pubKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         KeyFactory fact = KeyFactory.getInstance("RSA");
-        pubKey = fact.generatePublic(spec);
+        return fact.generatePublic(spec);
     }
 
-    private TrustManager[] getCerts() {
-        return new TrustManager[]{
-                new X509TrustManager() {
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
+    private SSLContext getSslContext() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslcontext = SSLContext.getInstance("TLS");
+        sslcontext.init(null, new TrustManager[]
+                {
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType)
-                            throws CertificateException {
+                            }
 
-                        for (X509Certificate cert : chain) {
-                            if (cert.getPublicKey().equals(pubKey))
-                                return;
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                                for (X509Certificate cert : chain) {
+                                    String certPrint = getThumbPrint(cert.getPublicKey().getEncoded());
+                                    String pubKeyPrint = getThumbPrint(pubKey.getEncoded());
+                                    Logger.info("cert: %s, expect: %s", certPrint, pubKeyPrint);
+                                    if (certPrint.equals(pubKeyPrint))
+                                        return;
+                                }
+                                throw new CertificateException("Invalid RSA Public key");
+                            }
+
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                return new X509Certificate[0];
+                            }
+
                         }
-
-                        throw new CertificateException("Invalid RSA Public key");
-                    }
-
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType)
-                            throws CertificateException {
-
-                    }
-                }
-        };
+                }, new java.security.SecureRandom());
+        return sslcontext;
     }
 
-    public String testService(Service service) {
-        NewBot bot = new NewBot();
-        bot.client = "f0f4028e753cb7cc";
-        bot.conversation = new Conversation();
-        bot.conversation.id = "f0dc6989-f862-4c53-a257-06044cd23d41";
-        bot.conversation.members = new ArrayList<>();
-        bot.conversation.members.add(new Member());
-        bot.conversation.members.get(0).id = "fed64a84-4df0-420a-ae6f-a1ff7ff41ea9";
-        bot.conversation.name = "Test";
-        bot.id = "4d7e590d-1dd4-43c6-a88b-ccc49ab00efd";
-        bot.locale = "en";
-        bot.token = "GPq5ToXOz34QbKw4Sfs4n1sv9eOV2Y6aodZiWIE8zr3joSyvg5NjWe82ajNOMz3wIPCZFU7eBly4cT8-F3yZAg==" +
-                ".v=1.k=1.d=-1.t=b.l=.p=d39b462f-7e60-4d88-82e1-44d632f94901.b=4d7e590d-1dd4-43c6-a88b-ccc49ab00efd." +
-                "c=f0dc6989-f862-4c53-a257-06044cd23d41";
-        bot.origin = new User();
-        bot.origin.handle = "dejan";
-        bot.origin.id = "fed64a84-4df0-420a-ae6f-a1ff7ff41ea9";
-        bot.origin.name = "Dejan";
+    private String getThumbPrint(byte[] der) {
+        md.update(der);
+        byte[] digest = md.digest();
+        return hexify(digest);
+    }
+
+    private static String hexify(byte bytes[]) {
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        StringBuilder buf = new StringBuilder(bytes.length * 2);
+        for (byte aByte : bytes) {
+            buf.append(hexDigits[(aByte & 0xf0) >> 4]);
+            buf.append(hexDigits[aByte & 0x0f]);
+        }
+        return buf.toString();
+    }
+
+    public String testService(Service service) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        byte[] resource = Util.getResource("newBot.json");
+        NewBot bot = objectMapper.readValue(resource, NewBot.class);
 
         Response response = client.target(service.url).
                 path("bots").
                 request(MediaType.APPLICATION_JSON).
-                accept(MediaType.APPLICATION_JSON).
                 header("Authorization", "Bearer " + service.auth_tokens[0]).
                 post(Entity.entity(bot, MediaType.APPLICATION_JSON));
 

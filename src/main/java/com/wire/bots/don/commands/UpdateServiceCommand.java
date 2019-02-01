@@ -81,7 +81,7 @@ public class UpdateServiceCommand extends Command {
 
         String value = text;
 
-        String url = service.field.equalsIgnoreCase(URL) ? value.toLowerCase() : null;
+        String url = service.field.equalsIgnoreCase(URL) ? value.trim() : null;
         String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
         String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
         String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;

@@ -29,7 +29,7 @@ public class TestBotCommand extends Command {
     }
 
     @Override
-    public Command onMessage(WireClient client, String text) throws Exception {
+    public Command onMessage(WireClient client, String text) {
         return def();
     }
 }
