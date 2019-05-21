@@ -8,14 +8,8 @@ import com.wire.bots.sdk.WireClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 26/10/16
- * Time: 23:38
- */
-public class GetTokenCommand extends Command {
-    GetTokenCommand(WireClient client, String userId, String serviceName, Database db) throws Exception {
+public class GetCodeCommand extends Command {
+    GetCodeCommand(WireClient client, String userId, String serviceName, Database db) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;
@@ -23,7 +17,9 @@ public class GetTokenCommand extends Command {
         Service service = getService(cookie, serviceName);
 
         if (service != null)
-            client.sendText(String.format("%s:%s", provider.id, service.id));
+            client.sendText(String.format("`%s:%s`\nUse this code in Team Settings to whitelist this bot for your team",
+                    provider.id,
+                    service.id));
         else
             client.sendText("Unknown service");
     }

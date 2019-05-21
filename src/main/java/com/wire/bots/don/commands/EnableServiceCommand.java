@@ -1,6 +1,5 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.Util;
 import com.wire.bots.don.db.Database;
 import com.wire.bots.don.db.User;
 import com.wire.bots.don.model.Service;
@@ -29,12 +28,15 @@ public class EnableServiceCommand extends Command {
         for (Service s : services) {
             if (s.name.compareToIgnoreCase(serviceName) == 0) {
                 try {
-                    providerClient.enableService(cookie, password, s.id);
-
-                    String link = Util.getInviteLink(s.name, user.provider, s.id);
-                    String msg = "Users can start using your bot by clicking on this link: " + link;
-                    client.sendText(msg);
-                    Logger.info(msg);
+                    boolean enableService = providerClient.enableService(cookie, password, s.id);
+                    if (enableService) {
+                        String msg = String.format("Service was enabled. Service code:\n`%s:%s`", user.provider, s.id);
+                        client.sendText(msg);
+                        Logger.info(msg);
+                    } else {
+                        Logger.error("Failed to enable service: %s", s.id);
+                        client.sendText("Failed to enable the service");
+                    }
                 } catch (IOException e) {
                     client.sendText(e.getMessage());
                     return def();

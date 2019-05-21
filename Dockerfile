@@ -1,4 +1,4 @@
-FROM dejankovacevic/bots.runtime:2.10.2
+FROM dejankovacevic/bots.runtime:2.10.3
 
 COPY target/don.jar      /opt/don/don.jar
 COPY don.yaml            /etc/don/don.yaml

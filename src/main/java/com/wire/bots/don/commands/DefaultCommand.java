@@ -39,7 +39,7 @@ public class DefaultCommand extends Command {
                 return new DeleteBotCommand(client, userId, db);
             }
 
-            if (text.startsWith("list my bots")) {
+            if (text.startsWith("list bots")) {
                 new ListServicesCommand(client, userId, db);
                 return def();
             }
@@ -69,9 +69,9 @@ public class DefaultCommand extends Command {
                 return def();
             }
 
-            if (text.startsWith("token")) {
-                String botName = getParams(text.substring("token".length()));
-                new GetTokenCommand(client, userId, botName, db);
+            if (text.startsWith("code")) {
+                String botName = getParams(text.substring("code".length()));
+                new GetCodeCommand(client, userId, botName, db);
                 return def();
             }
 
@@ -84,12 +84,12 @@ public class DefaultCommand extends Command {
                     "login\n" +
                     "get self\n" +
                     "create bot\n" +
-                    "list my bots\n" +
+                    "list bots\n" +
                     "show bot <name>\n" +
                     "update bot <name>\n" +
                     "delete bot\n" +
                     "enable bot <name>\n" +
-                    "token <BotName>\n" +
+                    "code <name>\n" +
                     "test bot <name>");
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());

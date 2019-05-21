@@ -1,6 +1,6 @@
 package com.wire.bots.don.clients;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.wire.bots.don.DonService;
 import com.wire.bots.don.exceptions.FailedAuthenticationException;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.*;
@@ -8,12 +8,10 @@ import com.wire.bots.sdk.assets.Picture;
 import com.wire.bots.sdk.models.AssetKey;
 import com.wire.bots.sdk.tools.Logger;
 import com.wire.bots.sdk.tools.Util;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,17 +20,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProviderClient {
-    private static final Client client;
-    private static final String httpUrl;
+    private WebTarget target;
 
-    static {
-        String env = System.getProperty("env", "prod");
-        String domain = env.equals("prod") ? "wire.com" : "zinfra.io";
-        httpUrl = String.format("https://%s-nginz-https.%s", env, domain);
-
-        ClientConfig cfg = new ClientConfig(JacksonJsonProvider.class);
-        cfg.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
-        client = JerseyClientBuilder.createClient(cfg);
+    public ProviderClient() {
+        Client client = DonService.instance.getClient();
+        target = client.target(Util.getHost());
     }
 
     public Auth register(String name, String email, String password, String url, String desc)
@@ -44,7 +36,7 @@ public class ProviderClient {
         provider.url = url;
         provider.description = desc;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/register").
                 request(MediaType.APPLICATION_JSON).
                 post(Entity.entity(provider, MediaType.APPLICATION_JSON));
@@ -60,7 +52,7 @@ public class ProviderClient {
         auth.email = email;
         auth.password = password;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/login").
                 request(MediaType.APPLICATION_JSON).
                 post(Entity.entity(auth, MediaType.APPLICATION_JSON));
@@ -86,7 +78,7 @@ public class ProviderClient {
         service.tags = tags;
         service.assets = assets;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/services").
                 request(MediaType.APPLICATION_JSON).
                 header("Cookie", cookie).
@@ -102,7 +94,7 @@ public class ProviderClient {
     }
 
     public ArrayList<Service> listServices(String cookie) throws IOException {
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/services").
                 request(MediaType.APPLICATION_JSON).
                 header("Cookie", cookie).
@@ -118,8 +110,8 @@ public class ProviderClient {
         });
     }
 
-    public Service getService(String cookie, String pid, String sid) throws IOException {
-        Response response = client.target(httpUrl).
+    public Service getService(String cookie, String pid, String sid) {
+        Response response = target.
                 path("providers").
                 path(pid).
                 path("services").
@@ -131,8 +123,8 @@ public class ProviderClient {
         return response.readEntity(Service.class);
     }
 
-    public Provider getProvider(String cookie) throws IOException {
-        return client.target(httpUrl).
+    public Provider getProvider(String cookie) {
+        return target.
                 path("provider").
                 request(MediaType.APPLICATION_JSON).
                 header("Cookie", cookie).
@@ -157,7 +149,7 @@ public class ProviderClient {
         service.enabled = enabled;
         service.password = password;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/services").
                 path(id).
                 path("connection").
@@ -181,7 +173,7 @@ public class ProviderClient {
         service.password = password;
         service.assets = assets;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/services").
                 path(id).
                 request(MediaType.APPLICATION_JSON).
@@ -201,7 +193,7 @@ public class ProviderClient {
         Auth auth = new Auth();
         auth.password = password;
 
-        Response response = client.target(httpUrl).
+        Response response = target.
                 path("provider/services").
                 path(id).
                 request(MediaType.APPLICATION_JSON).
@@ -248,7 +240,7 @@ public class ProviderClient {
         os.write(data);
         os.write("\r\n--frontier--\r\n".getBytes("utf-8"));
 
-        Response response = client.target(httpUrl)
+        Response response = target
                 .path("provider/assets")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Cookie", cookie)

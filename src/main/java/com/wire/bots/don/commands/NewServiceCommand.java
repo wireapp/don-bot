@@ -76,8 +76,9 @@ public class NewServiceCommand extends Command {
                     new String[]{"tutorial"},
                     assets);
 
-            String msg = String.format("Success!\nAuthentication token: %s",
-                    authToken.auth_token);
+            String msg = String.format("Success!\nAuthentication token: `%s`\nTo enable this bot run: `enable bot %s`",
+                    authToken.auth_token,
+                    service.name);
 
             Logger.info(msg);
             client.sendText(msg);
