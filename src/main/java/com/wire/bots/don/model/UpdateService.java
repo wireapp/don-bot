@@ -15,6 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateService {
+    @JsonProperty
     public String password;
 
     // connection
@@ -27,8 +28,11 @@ public class UpdateService {
     public String[] pubKeys;
 
     // service
+    @JsonProperty
     public String description;
     @JsonProperty
     public List<Asset> assets;
 
+    @JsonProperty
+    public String name;
 }

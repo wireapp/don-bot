@@ -16,6 +16,8 @@ public class UpdateServiceCommand extends Command {
     private static final String TOKEN = "token";
     private static final String URL = "url";
     private static final String DESCRIPTION = "description";
+    private static final String SERVICE_NAME = "service name";
+
     private final int id;
     private final String cookie;
     private String password;
@@ -46,12 +48,13 @@ public class UpdateServiceCommand extends Command {
     public Command onMessage(WireClient client, String text) throws Exception {
         if (password == null) {
             password = text.trim();
-            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`)?"
+            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`, `%s`)?"
                     , URL
                     , TOKEN
                     , PUBKEY
                     , PROFILE_PICTURE
-                    , DESCRIPTION);
+                    , DESCRIPTION
+                    , SERVICE_NAME);
             client.sendText(txt);
             return this;
         }
@@ -60,13 +63,14 @@ public class UpdateServiceCommand extends Command {
 
         if (service.field == null) {
             service.field = text.toLowerCase();
-            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s`"
+            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION + SERVICE_NAME).contains(service.field)) {
+                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s` | `%s`"
                         , URL
                         , TOKEN
                         , PUBKEY
                         , PROFILE_PICTURE
-                        , DESCRIPTION);
+                        , DESCRIPTION
+                        , SERVICE_NAME);
                 client.sendText(txt);
                 return this;
             }
@@ -79,12 +83,13 @@ public class UpdateServiceCommand extends Command {
         String name = service.name;
         String id = service.serviceId;
 
-        String value = text;
+        String value = text.trim();
 
-        String url = service.field.equalsIgnoreCase(URL) ? value.trim() : null;
+        String url = service.field.equalsIgnoreCase(URL) ? value : null;
         String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
         String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
         String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
+        String newServiceName = service.field.equalsIgnoreCase(SERVICE_NAME) ? value : null;
 
         ArrayList<Asset> assets = null;
         if (PROFILE_PICTURE.contains(service.field)) {
@@ -97,7 +102,11 @@ public class UpdateServiceCommand extends Command {
         }
 
         if (assets != null || description != null) {
-            b = providerClient.updateService(cookie, password, id, description, assets);
+            b = providerClient.updateService(cookie, password, id, description, null, assets);
+        }
+
+        if (newServiceName != null) {
+            b = providerClient.updateService(cookie, password, id, null, newServiceName, assets);
         }
 
         if (b) {

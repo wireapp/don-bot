@@ -166,12 +166,13 @@ public class ProviderClient {
         return response.getStatus() == 200;
     }
 
-    public boolean updateService(String cookie, String password, String id, String description, ArrayList<Asset> assets)
+    public boolean updateService(String cookie, String password, String id, String description, String name, ArrayList<Asset> assets)
             throws IOException {
         UpdateService service = new UpdateService();
-        service.description = description;
         service.password = password;
         service.assets = assets;
+        service.name = name;
+        service.description = description;
 
         Response response = target.
                 path("provider/services").
