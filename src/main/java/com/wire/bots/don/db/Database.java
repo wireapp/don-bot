@@ -3,6 +3,7 @@ package com.wire.bots.don.db;
 import com.wire.bots.sdk.Configuration;
 
 import java.sql.*;
+import java.util.UUID;
 
 public class Database {
     private final Configuration.DB conf;
@@ -11,28 +12,27 @@ public class Database {
         this.conf = postgres;
     }
 
-    public int insertUser(String userId, String name) throws Exception {
+    public int insertUser(UUID userId, String name) throws Exception {
         try (Connection connection = getConnection()) {
             String cmd = "INSERT INTO DON_USER (UserId, Name) VALUES(?, ?)";
             PreparedStatement stm = connection.prepareStatement(cmd);
-            stm.setString(1, userId);
+            stm.setString(1, userId.toString());
             stm.setString(2, name);
             return stm.executeUpdate();
         }
     }
 
-    public User getUser(String userId) throws Exception {
+    public User getUser(UUID userId) throws Exception {
         try (Connection connection = getConnection()) {
             String cmd = "SELECT * FROM DON_USER WHERE UserId = ?";
             PreparedStatement stm = connection.prepareStatement(cmd);
-            stm.setString(1, userId);
+            stm.setString(1, userId.toString());
             ResultSet rs = stm.executeQuery();
             User user = new User();
             if (rs.next()) {
                 user.id = rs.getString("UserId");
                 user.name = rs.getString("name");
                 user.email = rs.getString("email");
-                //user.password = rs.getString("password");
                 user.provider = rs.getString("provider");
                 user.cookie = rs.getString("cookie");
                 return user;
@@ -41,7 +41,7 @@ public class Database {
         return null;
     }
 
-    public int updateUser(String userId, String email, String provider) throws Exception {
+    public int updateUser(UUID userId, String email, String provider) throws Exception {
         try (Connection connection = getConnection()) {
             String cmd = "UPDATE DON_USER SET " +
                     "Email = ?, " +
@@ -51,27 +51,27 @@ public class Database {
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, email);
             stm.setString(2, provider);
-            stm.setString(3, userId);
+            stm.setString(3, userId.toString());
             return stm.executeUpdate();
         }
     }
 
-    public int updateCookie(String userId, String token) throws Exception {
+    public int updateCookie(UUID userId, String token) throws Exception {
         try (Connection connection = getConnection()) {
             String cmd = "UPDATE DON_USER SET cookie = ? WHERE UserId = ?";
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, token);
-            stm.setString(2, userId);
+            stm.setString(2, userId.toString());
             return stm.executeUpdate();
         }
     }
 
-    public int deleteCookie(String userId) throws SQLException {
+    public int deleteCookie(UUID userId) throws SQLException {
         try (Connection connection = getConnection()) {
             String cmd = "UPDATE DON_USER SET cookie = ? WHERE UserId = ?";
             PreparedStatement stm = connection.prepareStatement(cmd);
             stm.setString(1, null);
-            stm.setString(2, userId);
+            stm.setString(2, userId.toString());
             return stm.executeUpdate();
         }
     }

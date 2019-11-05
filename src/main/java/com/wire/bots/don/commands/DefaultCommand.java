@@ -5,8 +5,10 @@ import com.wire.bots.don.exceptions.*;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
+import java.util.UUID;
+
 public class DefaultCommand extends Command {
-    public DefaultCommand(WireClient client, String userId, Database db) {
+    public DefaultCommand(WireClient client, UUID userId, Database db) {
         super(client, userId, db);
     }
 

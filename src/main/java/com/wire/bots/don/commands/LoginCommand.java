@@ -4,10 +4,12 @@ import com.wire.bots.don.db.Database;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
+import java.util.UUID;
+
 public class LoginCommand extends Command {
     private String email;
 
-    LoginCommand(WireClient client, String userId, Database db) throws Exception {
+    LoginCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         client.sendText("Email:");

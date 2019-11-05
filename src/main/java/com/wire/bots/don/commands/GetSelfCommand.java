@@ -6,6 +6,8 @@ import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Provider;
 import com.wire.bots.sdk.WireClient;
 
+import java.util.UUID;
+
 /**
  * Created with IntelliJ IDEA.
  * User: dejankovacevic
@@ -13,7 +15,7 @@ import com.wire.bots.sdk.WireClient;
  * Time: 23:38
  */
 public class GetSelfCommand extends Command {
-    GetSelfCommand(WireClient client, String userId, Database db) throws Exception {
+    GetSelfCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;

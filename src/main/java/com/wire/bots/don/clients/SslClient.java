@@ -6,7 +6,6 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.server.model.NewBot;
 import com.wire.bots.sdk.tools.Logger;
 import com.wire.bots.sdk.tools.Util;
-import sun.misc.BASE64Decoder;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -23,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class SslClient implements Closeable {
     private Client client;
@@ -39,12 +39,11 @@ public class SslClient implements Closeable {
                 .build();
     }
 
-    private PublicKey createPublicKey(String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private PublicKey createPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String pubKeyPEM = publicKey.replace(
                 "-----BEGIN PUBLIC KEY-----\n", "")
                 .replace("-----END PUBLIC KEY-----", "");
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] data = decoder.decodeBuffer(pubKeyPEM);
+        byte[] data = Base64.getDecoder().decode(pubKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         KeyFactory fact = KeyFactory.getInstance("RSA");
         return fact.generatePublic(spec);

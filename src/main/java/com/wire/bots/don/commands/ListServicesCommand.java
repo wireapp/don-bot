@@ -5,9 +5,10 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ListServicesCommand extends Command {
-    ListServicesCommand(WireClient client, String userId, Database db) throws Exception {
+    ListServicesCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         ArrayList<Service> services = providerClient.listServices(getUser().cookie);

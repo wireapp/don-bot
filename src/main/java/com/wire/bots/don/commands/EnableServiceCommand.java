@@ -8,11 +8,12 @@ import com.wire.bots.sdk.tools.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class EnableServiceCommand extends Command {
     private final String serviceName;
 
-    EnableServiceCommand(WireClient client, String userId, Database db, String serviceName) throws Exception {
+    EnableServiceCommand(WireClient client, UUID userId, Database db, String serviceName) throws Exception {
         super(client, userId, db);
         this.serviceName = serviceName;
 

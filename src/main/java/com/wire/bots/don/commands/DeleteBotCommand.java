@@ -6,11 +6,12 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class DeleteBotCommand extends Command {
     private String password;
 
-    DeleteBotCommand(WireClient client, String userId, Database db) throws Exception {
+    DeleteBotCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         client.sendText("Please enter password one more time:");

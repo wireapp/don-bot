@@ -8,6 +8,7 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  * Time: 17:21
  */
 public class GetBotCommand extends Command {
-    GetBotCommand(WireClient client, String userId, Database db, String botName) throws Exception {
+    GetBotCommand(WireClient client, UUID userId, Database db, String botName) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;

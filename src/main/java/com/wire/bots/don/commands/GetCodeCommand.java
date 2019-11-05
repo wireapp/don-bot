@@ -7,9 +7,10 @@ import com.wire.bots.sdk.WireClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class GetCodeCommand extends Command {
-    GetCodeCommand(WireClient client, String userId, String serviceName, Database db) throws Exception {
+    GetCodeCommand(WireClient client, UUID userId, String serviceName, Database db) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;

@@ -12,15 +12,16 @@ import com.wire.bots.sdk.tools.Logger;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public abstract class Command {
     protected final WireClient client;
-    protected final String userId;
-    final String botId;
+    protected final UUID userId;
+    final UUID botId;
     protected final Database db;
     protected static ProviderClient providerClient = new ProviderClient();
 
-    protected Command(WireClient client, String userId, Database db) {
+    protected Command(WireClient client, UUID userId, Database db) {
         this.client = client;
         this.userId = userId;
         botId = client.getId();
@@ -31,11 +32,6 @@ public abstract class Command {
 
     Command def() {
         return new DefaultCommand(client, userId, db);
-    }
-
-    protected boolean isAuthenticated() throws Exception {
-        User user = getUser();
-        return user != null && user.cookie != null;
     }
 
     protected User getUser() throws Exception {

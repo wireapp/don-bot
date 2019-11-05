@@ -3,6 +3,8 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.db.Database;
 import com.wire.bots.sdk.WireClient;
 
+import java.util.UUID;
+
 /**
  * Created with IntelliJ IDEA.
  * User: dejankovacevic
@@ -10,7 +12,7 @@ import com.wire.bots.sdk.WireClient;
  * Time: 21:46
  */
 public class SearchCommand extends Command {
-    public SearchCommand(WireClient client, String userId, Database db, String params) throws Exception {
+    public SearchCommand(WireClient client, UUID userId, Database db, String params) throws Exception {
         super(client, userId, db);
 
 //        String[] split = params.split(" ");

@@ -7,9 +7,10 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class TestBotCommand extends Command {
-    TestBotCommand(WireClient client, String userId, Database db, String botName) throws Exception {
+    TestBotCommand(WireClient client, UUID userId, Database db, String botName) throws Exception {
         super(client, userId, db);
 
         User user = getUser();

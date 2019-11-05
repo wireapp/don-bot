@@ -9,6 +9,7 @@ import com.wire.bots.sdk.tools.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class UpdateServiceCommand extends Command {
     private static final String PROFILE_PICTURE = "profile picture";
@@ -22,7 +23,7 @@ public class UpdateServiceCommand extends Command {
     private final String cookie;
     private String password;
 
-    UpdateServiceCommand(WireClient client, String userId, Database db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, UUID userId, Database db, String serviceName) throws Exception {
         super(client, userId, db);
 
         cookie = getUser().cookie;

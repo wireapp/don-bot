@@ -28,5 +28,5 @@ postgres:
   password: ${POSTRES_PASSWORD}
 
 db:
-    host: localhost
-    port: 6379 #redis port
+  host: localhost
+  port: 6379 #redis port

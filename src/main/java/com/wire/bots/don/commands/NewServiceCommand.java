@@ -9,11 +9,12 @@ import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class NewServiceCommand extends Command {
     private final int serviceId;
 
-    NewServiceCommand(WireClient client, String userId, Database db) throws Exception {
+    NewServiceCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         ArrayList<com.wire.bots.don.model.Service> services = providerClient.listServices(getUser().cookie);

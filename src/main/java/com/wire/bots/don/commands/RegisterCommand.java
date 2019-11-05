@@ -7,10 +7,12 @@ import com.wire.bots.don.model.Auth;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
+import java.util.UUID;
+
 public class RegisterCommand extends Command {
     private String email;
 
-    RegisterCommand(WireClient client, String userId, Database db) throws Exception {
+    RegisterCommand(WireClient client, UUID userId, Database db) throws Exception {
         super(client, userId, db);
 
         client.sendText("What is your email?");
