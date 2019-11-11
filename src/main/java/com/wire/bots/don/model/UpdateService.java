@@ -30,6 +30,10 @@ public class UpdateService {
     // service
     @JsonProperty
     public String description;
+
+    @JsonProperty
+    public String summary;
+
     @JsonProperty
     public List<Asset> assets;
 

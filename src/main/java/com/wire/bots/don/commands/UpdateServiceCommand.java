@@ -4,6 +4,7 @@ import com.wire.bots.don.db.Database;
 import com.wire.bots.don.exceptions.UnknownBotException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.Service;
+import com.wire.bots.don.model.UpdateService;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
 
@@ -17,6 +18,7 @@ public class UpdateServiceCommand extends Command {
     private static final String TOKEN = "token";
     private static final String URL = "url";
     private static final String DESCRIPTION = "description";
+    private static final String SUMMARY = "summary";
     private static final String SERVICE_NAME = "service name";
 
     private final int id;
@@ -49,12 +51,13 @@ public class UpdateServiceCommand extends Command {
     public Command onMessage(WireClient client, String text) throws Exception {
         if (password == null) {
             password = text.trim();
-            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`, `%s`)?"
+            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`)?"
                     , URL
                     , TOKEN
                     , PUBKEY
                     , PROFILE_PICTURE
                     , DESCRIPTION
+                    , SUMMARY
                     , SERVICE_NAME);
             client.sendText(txt);
             return this;
@@ -64,13 +67,14 @@ public class UpdateServiceCommand extends Command {
 
         if (service.field == null) {
             service.field = text.toLowerCase();
-            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION + SERVICE_NAME).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s` | `%s`"
+            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION + SERVICE_NAME + SUMMARY).contains(service.field)) {
+                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s` | `%s` | `%s`"
                         , URL
                         , TOKEN
                         , PUBKEY
                         , PROFILE_PICTURE
                         , DESCRIPTION
+                        , SUMMARY
                         , SERVICE_NAME);
                 client.sendText(txt);
                 return this;
@@ -81,15 +85,13 @@ public class UpdateServiceCommand extends Command {
             return this;
         }
 
-        String name = service.name;
-        String id = service.serviceId;
-
         String value = text.trim();
 
         String url = service.field.equalsIgnoreCase(URL) ? value : null;
         String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
         String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
         String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
+        String summary = service.field.equalsIgnoreCase(SUMMARY) ? value : null;
         String newServiceName = service.field.equalsIgnoreCase(SERVICE_NAME) ? value : null;
 
         ArrayList<Asset> assets = null;
@@ -97,25 +99,28 @@ public class UpdateServiceCommand extends Command {
             assets = uploadProfile(cookie, value);
         }
 
+        UpdateService updateService = new UpdateService();
+        updateService.password = password;
+        updateService.assets = assets;
+        updateService.name = newServiceName;
+        updateService.description = description;
+        updateService.summary = summary;
+
         boolean b = false;
         if (url != null || tokens != null || pubkeys != null) {
-            b = providerClient.updateServiceConnection(cookie, password, id, url, tokens, pubkeys, null);
+            b = providerClient.updateServiceConnection(cookie, service.serviceId, updateService);
         }
 
-        if (assets != null || description != null) {
-            b = providerClient.updateService(cookie, password, id, description, null, assets);
-        }
-
-        if (newServiceName != null) {
-            b = providerClient.updateService(cookie, password, id, null, newServiceName, assets);
+        if (assets != null || description != null || summary != null) {
+            b = providerClient.updateService(cookie, service.serviceId, updateService);
         }
 
         if (b) {
-            String msg = "Updated bot " + name;
+            String msg = "Updated bot " + service.name;
             client.sendText(msg);
             Logger.info(msg);
         } else {
-            String msg = "Failed to update bot " + name;
+            String msg = "Failed to update bot " + service.name;
             client.sendText(msg);
             Logger.error(msg);
         }

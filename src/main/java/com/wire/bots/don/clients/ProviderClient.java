@@ -132,23 +132,14 @@ public class ProviderClient {
     }
 
     public boolean enableService(String cookie, String password, String id) throws IOException {
-        return updateServiceConnection(cookie, password, id, null, null, null, true);
-    }
-
-    public boolean disableService(String cookie, String password, String id) throws IOException {
-        return updateServiceConnection(cookie, password, id, null, null, null, false);
-    }
-
-    public boolean updateServiceConnection(String cookie, String password, String id,
-                                           String url, String[] tokens, String[] pubKeys, Boolean enabled)
-            throws IOException {
         UpdateService service = new UpdateService();
-        service.pubKeys = pubKeys;
-        service.url = url;
-        service.tokens = tokens;
-        service.enabled = enabled;
         service.password = password;
+        service.enabled = true;
 
+        return updateServiceConnection(cookie, id, service);
+    }
+
+    public boolean updateServiceConnection(String cookie, String id, UpdateService service) throws IOException {
         Response response = target.
                 path("provider/services").
                 path(id).
@@ -166,13 +157,7 @@ public class ProviderClient {
         return response.getStatus() == 200;
     }
 
-    public boolean updateService(String cookie, String password, String id, String description, String name, ArrayList<Asset> assets)
-            throws IOException {
-        UpdateService service = new UpdateService();
-        service.password = password;
-        service.assets = assets;
-        service.name = name;
-        service.description = description;
+    public boolean updateService(String cookie, String id, UpdateService service) throws IOException {
 
         Response response = target.
                 path("provider/services").
