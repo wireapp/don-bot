@@ -106,12 +106,10 @@ public class UpdateServiceCommand extends Command {
         updateService.description = description;
         updateService.summary = summary;
 
-        boolean b = false;
+        boolean b;
         if (url != null || tokens != null || pubkeys != null) {
             b = providerClient.updateServiceConnection(cookie, service.serviceId, updateService);
-        }
-
-        if (assets != null || description != null || summary != null) {
+        } else {
             b = providerClient.updateService(cookie, service.serviceId, updateService);
         }
 

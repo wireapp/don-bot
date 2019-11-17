@@ -151,7 +151,6 @@ public class ProviderClient {
         if (response.getStatus() > 300) {
             String msg = response.readEntity(String.class);
             Logger.error(msg);
-            throw new IOException(msg);
         }
 
         return response.getStatus() == 200;
@@ -169,7 +168,6 @@ public class ProviderClient {
         if (response.getStatus() > 300) {
             String msg = response.readEntity(String.class);
             Logger.error(msg);
-            throw new IOException(msg);
         }
 
         return response.getStatus() == 200;
