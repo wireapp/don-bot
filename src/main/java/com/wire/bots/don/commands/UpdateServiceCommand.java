@@ -105,6 +105,7 @@ public class UpdateServiceCommand extends Command {
         updateService.name = newServiceName;
         updateService.description = description;
         updateService.summary = summary;
+        updateService.url = url;
 
         boolean b;
         if (url != null || tokens != null || pubkeys != null) {
