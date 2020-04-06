@@ -1,12 +1,12 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
-import com.wire.bots.don.db.Service;
+import com.wire.bots.don.DAO.model.Service;
 import com.wire.bots.don.exceptions.TooManyBotsException;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.AuthToken;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -14,7 +14,7 @@ import java.util.UUID;
 public class NewServiceCommand extends Command {
     private final int serviceId;
 
-    NewServiceCommand(WireClient client, UUID userId, Database db) throws Exception {
+    NewServiceCommand(WireClient client, UUID userId, DBI db) throws Exception {
         super(client, userId, db);
 
         ArrayList<com.wire.bots.don.model.Service> services = providerClient.listServices(getUser().cookie);
@@ -23,15 +23,15 @@ public class NewServiceCommand extends Command {
 
         client.sendText("What should we call this bot?");
 
-        serviceId = db.insertService(null);
+        serviceId = serviceDAO.insertService(null);
     }
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
-        Service service = db.getService(serviceId);
+        Service service = serviceDAO.getService(serviceId);
 
         if (service.name == null) {
-            db.updateService(serviceId, "name", text);
+            serviceDAO.updateService(serviceId, "name", text);
             client.sendText("What is the base url for this bot?");
             return this;
         }
@@ -41,20 +41,20 @@ public class NewServiceCommand extends Command {
                 client.sendText("Please, specify valid https url like: https://example.com");
                 return this;
             }
-            db.updateService(serviceId, "url", text.toLowerCase());
+            serviceDAO.updateService(serviceId, "url", text.toLowerCase());
 
             client.sendText("Write some description for this bot");
             return this;
         }
 
         if (service.description == null) {
-            db.updateService(serviceId, "description", text);
+            serviceDAO.updateService(serviceId, "description", text);
             client.sendText("Paste the URL for the profile picture");
             return this;
         }
 
         if (service.profile == null) {
-            db.updateService(serviceId, "profile", text);
+            serviceDAO.updateService(serviceId, "profile", text);
             client.sendText("Paste rsa public key here");
             return this;
         }

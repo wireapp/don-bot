@@ -3,9 +3,9 @@ package com.wire.bots.don.commands;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -17,14 +17,13 @@ import java.util.UUID;
  * Time: 17:21
  */
 public class GetBotCommand extends Command {
-    GetBotCommand(WireClient client, UUID userId, Database db, String botName) throws Exception {
+    GetBotCommand(WireClient client, UUID userId, DBI db, String botName) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;
         ArrayList<Service> services = providerClient.listServices(cookie);
         for (Service s : services) {
             if (s.name.compareToIgnoreCase(botName) == 0) {
-                //Service service = be.getService(cookie, s.id);
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);

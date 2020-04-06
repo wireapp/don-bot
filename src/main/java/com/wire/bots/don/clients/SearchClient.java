@@ -1,9 +1,7 @@
 package com.wire.bots.don.clients;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.wire.bots.don.DonService;
 import com.wire.bots.don.model.Service;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
@@ -19,12 +17,8 @@ public class SearchClient {
 
     public SearchClient(String token) {
         this.token = token;
-        String env = System.getProperty("env", "prod");
-        String domain = env.equals("prod") ? "wire.com" : "zinfra.io"; //fixme: remove zinfra
-        httpUrl = String.format("https://%s-nginz-https.%s", env, domain);
-
-        ClientConfig cfg = new ClientConfig(JacksonJsonProvider.class);
-        client = JerseyClientBuilder.createClient(cfg);
+        httpUrl = DonService.instance.getConfig().apiHost;
+        client = DonService.instance.getClient();
     }
 
     public ArrayList<Service> search(String tags, String start) throws IOException {

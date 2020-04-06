@@ -6,7 +6,7 @@
 
     <artifactId>don</artifactId>
     <groupId>com.wire.bots</groupId>
-    <version>0.6.0</version>
+    <version>1.2.0</version>
 
     <repositories>
         <repository>
@@ -25,7 +25,12 @@
         <dependency>
             <groupId>com.wire.bots</groupId>
             <artifactId>lithium</artifactId>
-            <version>2.32.3</version>
+            <version>2.35.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.2</version>
         </dependency>
     </dependencies>
 

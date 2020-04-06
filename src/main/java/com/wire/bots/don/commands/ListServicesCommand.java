@@ -1,14 +1,14 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class ListServicesCommand extends Command {
-    ListServicesCommand(WireClient client, UUID userId, Database db) throws Exception {
+    ListServicesCommand(WireClient client, UUID userId, DBI db) throws Exception {
         super(client, userId, db);
 
         ArrayList<Service> services = providerClient.listServices(getUser().cookie);

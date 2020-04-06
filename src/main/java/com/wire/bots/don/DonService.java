@@ -20,11 +20,8 @@ public class DonService extends Server<DonConfig> {
 
     @Override
     protected MessageHandlerBase createHandler(DonConfig config, Environment env) {
-        return new MessageHandler(config);
+
+        return new MessageHandler(jdbi);
     }
 
-    @Override
-    protected void initialize(DonConfig config, Environment env) {
-        env.jersey().setUrlPattern("/don/*");
-    }
 }

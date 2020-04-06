@@ -1,18 +1,18 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
-import com.wire.bots.don.db.User;
+import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.Auth;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.UUID;
 
 public class RegisterCommand extends Command {
     private String email;
 
-    RegisterCommand(WireClient client, UUID userId, Database db) throws Exception {
+    RegisterCommand(WireClient client, UUID userId, DBI db) throws Exception {
         super(client, userId, db);
 
         client.sendText("What is your email?");
@@ -49,7 +49,7 @@ public class RegisterCommand extends Command {
             String desc = "You know, for the bots";
             Auth register = providerClient.register(user.name, email, password, homepage, desc);
 
-            db.updateUser(userId, email, register.id);
+            userDAO.updateUser(userId, email, register.id);
 
             client.sendText("OK. I sent verification email to: " + email);
         } catch (FailedRegistrationException e) {

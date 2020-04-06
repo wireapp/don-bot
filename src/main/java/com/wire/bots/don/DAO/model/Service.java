@@ -1,4 +1,4 @@
-package com.wire.bots.don.db;
+package com.wire.bots.don.DAO.model;
 
 public class Service {
     public int id;

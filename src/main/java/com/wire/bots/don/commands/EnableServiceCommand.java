@@ -1,10 +1,10 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
-import com.wire.bots.don.db.User;
+import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.UUID;
 public class EnableServiceCommand extends Command {
     private final String serviceName;
 
-    EnableServiceCommand(WireClient client, UUID userId, Database db, String serviceName) throws Exception {
-        super(client, userId, db);
+    EnableServiceCommand(WireClient client, UUID userId, DBI jdbi, String serviceName) throws Exception {
+        super(client, userId, jdbi);
         this.serviceName = serviceName;
 
         client.sendText("Please enter password one more time");
