@@ -26,4 +26,3 @@ WORKDIR /opt/don
 EXPOSE  8080 8081 8082
 
 ENTRYPOINT ["java", "-jar", "don.jar", "server", "/etc/don/don.yaml"]
-
