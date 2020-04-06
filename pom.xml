@@ -6,7 +6,7 @@
 
     <artifactId>don</artifactId>
     <groupId>com.wire.bots</groupId>
-    <version>0.6.0</version>
+    <version>1.2.0</version>
 
     <repositories>
         <repository>

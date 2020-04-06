@@ -1,16 +1,16 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
 import com.wire.bots.don.model.Provider;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
+import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class GetCodeCommand extends Command {
-    GetCodeCommand(WireClient client, UUID userId, String serviceName, Database db) throws Exception {
+    GetCodeCommand(WireClient client, UUID userId, String serviceName, DBI db) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;

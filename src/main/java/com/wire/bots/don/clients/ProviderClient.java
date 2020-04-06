@@ -24,7 +24,7 @@ public class ProviderClient {
 
     public ProviderClient() {
         Client client = DonService.instance.getClient();
-        target = client.target(Util.getHost());
+        target = client.target(DonService.instance.getConfig().apiHost);
     }
 
     public Auth register(String name, String email, String password, String url, String desc)

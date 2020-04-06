@@ -1,15 +1,15 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
 import com.wire.bots.don.exceptions.*;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.UUID;
 
 public class DefaultCommand extends Command {
-    public DefaultCommand(WireClient client, UUID userId, Database db) {
-        super(client, userId, db);
+    public DefaultCommand(WireClient client, UUID userId, DBI jdbi) {
+        super(client, userId, jdbi);
     }
 
     @Override

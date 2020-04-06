@@ -1,9 +1,9 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
-import com.wire.bots.don.db.User;
+import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.sdk.WireClient;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -11,8 +11,8 @@ import java.util.UUID;
 public class DeleteBotCommand extends Command {
     private String password;
 
-    DeleteBotCommand(WireClient client, UUID userId, Database db) throws Exception {
-        super(client, userId, db);
+    DeleteBotCommand(WireClient client, UUID userId, DBI jdbi) throws Exception {
+        super(client, userId, jdbi);
 
         client.sendText("Please enter password one more time:");
     }

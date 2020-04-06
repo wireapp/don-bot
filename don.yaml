@@ -1,32 +1,22 @@
 server:
-  applicationConnectors:
-    - type: http
-      port: 8080
-
+  rootPath: /don/*
   requestLog:
-    appenders: []
-
-auth: ${WIRE_SERVICE_TOKEN}
+    appenders:
+      - type: console
+        filterFactories:
+          - type: status-filter-factory
 
 logging:
   level: INFO
   loggers:
-    "com.wire.bots.sdk.tools.logger": INFO
+    "com.wire.bots.logger": ${LOG_LEVEL:-INFO}
 
-swagger:
-  resourcePackage: com.wire.bots.sdk.server.resources
-  uriPrefix: /don
-  schemes:
-    - http
-    - https
+auth: ${SERVICE_TOKEN:-}
+apiHost: ${WIRE_API_HOST:-https://prod-nginz-https.wire.com}
 
-postgres:
-  host: localhost
-  port: 5432
-  driver: postgresql
-  user: ${POSTRES_USER}
-  password: ${POSTRES_PASSWORD}
+database:
+  driverClass: ${DB_DRIVER:-org.postgresql.Driver}
+  url: ${DB_URL:-jdbc:postgresql://localhost/don}
+  user: ${DB_USER:-}
+  password: ${DB_PASSWORD:-}
 
-db:
-  host: localhost
-  port: 6379 #redis port

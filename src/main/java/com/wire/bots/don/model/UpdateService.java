@@ -6,12 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dejankovacevic
- * Date: 26/10/16
- * Time: 13:13
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateService {

@@ -1,12 +1,11 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.don.db.Database;
 import com.wire.bots.don.exceptions.UnknownBotException;
-import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.don.model.UpdateService;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class UpdateServiceCommand extends Command {
     private final String cookie;
     private String password;
 
-    UpdateServiceCommand(WireClient client, UUID userId, Database db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, UUID userId, DBI db, String serviceName) throws Exception {
         super(client, userId, db);
 
         cookie = getUser().cookie;
@@ -36,13 +35,13 @@ public class UpdateServiceCommand extends Command {
             throw new UnknownBotException("You don't have a bot called: " + serviceName);
         }
 
-        id = db.insertService(serviceName);
+        id = serviceDAO.insertService(serviceName);
         if (id == -1) {
             throw new RuntimeException("Something went wrong");
         }
 
-        db.updateService(id, "serviceId", serviceId);
-        db.updateService(id, "name", serviceName);
+        serviceDAO.updateService(id, "serviceId", serviceId);
+        serviceDAO.updateService(id, "name", serviceName);
 
         client.sendText("Please enter password one more time:");
     }
@@ -63,7 +62,7 @@ public class UpdateServiceCommand extends Command {
             return this;
         }
 
-        com.wire.bots.don.db.Service service = db.getService(id);
+        com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
 
         if (service.field == null) {
             service.field = text.toLowerCase();
@@ -80,35 +79,30 @@ public class UpdateServiceCommand extends Command {
                 return this;
             }
 
-            db.updateService(id, "field", service.field);
+            serviceDAO.updateService(id, "field", service.field);
             client.sendText("What should I put there?");
             return this;
         }
 
         String value = text.trim();
 
-        String url = service.field.equalsIgnoreCase(URL) ? value : null;
-        String[] tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
-        String[] pubkeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
-        String description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
-        String summary = service.field.equalsIgnoreCase(SUMMARY) ? value : null;
-        String newServiceName = service.field.equalsIgnoreCase(SERVICE_NAME) ? value : null;
+        UpdateService updateService = new UpdateService();
 
-        ArrayList<Asset> assets = null;
+        updateService.url = service.field.equalsIgnoreCase(URL) ? value : null;
+        updateService.tokens = service.field.equalsIgnoreCase(TOKEN) ? new String[]{value} : null;
+        updateService.pubKeys = service.field.equalsIgnoreCase(PUBKEY) ? new String[]{value} : null;
+        updateService.description = service.field.equalsIgnoreCase(DESCRIPTION) ? value : null;
+        updateService.summary = service.field.equalsIgnoreCase(SUMMARY) ? value : null;
+        updateService.name = service.field.equalsIgnoreCase(SERVICE_NAME) ? value : null;
+
         if (PROFILE_PICTURE.contains(service.field)) {
-            assets = uploadProfile(cookie, value);
+            updateService.assets = uploadProfile(cookie, value);
         }
 
-        UpdateService updateService = new UpdateService();
         updateService.password = password;
-        updateService.assets = assets;
-        updateService.name = newServiceName;
-        updateService.description = description;
-        updateService.summary = summary;
-        updateService.url = url;
 
         boolean b;
-        if (url != null || tokens != null || pubkeys != null) {
+        if (updateService.url != null || updateService.tokens != null || updateService.pubKeys != null) {
             b = providerClient.updateServiceConnection(cookie, service.serviceId, updateService);
         } else {
             b = providerClient.updateService(cookie, service.serviceId, updateService);

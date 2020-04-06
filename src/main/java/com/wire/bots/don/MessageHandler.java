@@ -1,9 +1,9 @@
 package com.wire.bots.don;
 
+import com.wire.bots.don.DAO.UserDAO;
+import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.commands.Command;
 import com.wire.bots.don.commands.DefaultCommand;
-import com.wire.bots.don.db.Database;
-import com.wire.bots.don.db.User;
 import com.wire.bots.sdk.MessageHandlerBase;
 import com.wire.bots.sdk.WireClient;
 import com.wire.bots.sdk.models.EditedTextMessage;
@@ -12,20 +12,23 @@ import com.wire.bots.sdk.server.model.Member;
 import com.wire.bots.sdk.server.model.NewBot;
 import com.wire.bots.sdk.server.model.SystemMessage;
 import com.wire.bots.sdk.tools.Logger;
+import org.skife.jdbi.v2.DBI;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends MessageHandlerBase {
-    private final Database db;
+    private final UserDAO userDAO;
+    private final DBI jdbi;
     private final ConcurrentHashMap<UUID, Command> commands = new ConcurrentHashMap<>(); // <botId, command>
 
-    MessageHandler(DonConfig config) {
-        db = new Database(config.getPostgres());
+    MessageHandler(DBI jdbi) {
+        userDAO = jdbi.onDemand(UserDAO.class);
+        this.jdbi = jdbi;
     }
 
     @Override
-    public boolean onNewBot(NewBot newBot) {
+    public boolean onNewBot(NewBot newBot, String auth) {
         try {
             Logger.info(String.format("onNewBot: botId: %s, user: %s/%s, locale: %s",
                     newBot.id,
@@ -42,9 +45,9 @@ public class MessageHandler extends MessageHandlerBase {
                 }
             }
 
-            User user = db.getUser(newBot.origin.id);
+            User user = userDAO.getUser(newBot.origin.id);
             if (user == null)
-                db.insertUser(newBot.origin.id, newBot.origin.name);
+                userDAO.insertUser(newBot.origin.id, newBot.origin.name);
             return true;
         } catch (Exception e) {
             Logger.error("onNewBot: %s", e);
@@ -56,9 +59,9 @@ public class MessageHandler extends MessageHandlerBase {
     public void onMemberJoin(WireClient client, SystemMessage message) {
         for (UUID userId : message.users) {
             try {
-                User user = db.getUser(userId);
+                User user = userDAO.getUser(userId);
                 if (user == null) {
-                    db.insertUser(userId, client.getUser(userId).name);
+                    userDAO.insertUser(userId, client.getUser(userId).name);
                 }
             } catch (Exception e) {
                 Logger.error("onMemberJoin: %s", e);
@@ -81,7 +84,7 @@ public class MessageHandler extends MessageHandlerBase {
     public void onText(WireClient client, TextMessage msg) {
         try {
             UUID bot = client.getId();
-            Command command = commands.computeIfAbsent(bot, k -> new DefaultCommand(client, msg.getUserId(), db));
+            Command command = commands.computeIfAbsent(bot, k -> new DefaultCommand(client, msg.getUserId(), jdbi));
 
             commands.put(bot, command.onMessage(client, msg.getText()));
         } catch (Exception e) {
