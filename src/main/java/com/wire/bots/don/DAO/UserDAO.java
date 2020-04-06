@@ -34,7 +34,7 @@ public interface UserDAO {
         @Override
         public User map(int i, ResultSet rs, StatementContext statementContext) throws SQLException {
             User user = new User();
-            user.id = rs.getString("UserId");
+            user.id = (UUID) rs.getObject("UserId");
             user.name = rs.getString("name");
             user.email = rs.getString("email");
             user.provider = rs.getString("provider");
