@@ -3,6 +3,7 @@ package com.wire.bots.don.DAO;
 import com.wire.bots.don.DAO.model.Service;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 @UseStringTemplate3StatementLocator
 public interface ServiceDAO {
     @SqlUpdate("INSERT INTO Service (Name) VALUES(:name)")
+    @GetGeneratedKeys
     int insertService(@Bind("name") String name);
 
     @SqlQuery("SELECT * FROM Service WHERE Id = :serviceId")

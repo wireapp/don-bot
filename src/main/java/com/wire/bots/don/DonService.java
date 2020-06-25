@@ -20,8 +20,6 @@ public class DonService extends Server<DonConfig> {
 
     @Override
     protected MessageHandlerBase createHandler(DonConfig config, Environment env) {
-
         return new MessageHandler(jdbi);
     }
-
 }

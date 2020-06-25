@@ -43,6 +43,8 @@ public class UpdateServiceCommand extends Command {
         serviceDAO.updateService(id, "serviceId", serviceId);
         serviceDAO.updateService(id, "name", serviceName);
 
+        Logger.debug("UpdateServiceCommand: id: %s, service: %s, name: %s", id, serviceId, serviceName);
+
         client.sendText("Please enter password one more time:");
     }
 
@@ -81,10 +83,19 @@ public class UpdateServiceCommand extends Command {
 
             serviceDAO.updateService(id, "field", service.field);
             client.sendText("What should I put there?");
+
+            Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s", id, service.id, service.field);
+
             return this;
         }
 
         String value = text.trim();
+
+        Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s, value: %s",
+                id,
+                service.id,
+                service.field,
+                value);
 
         UpdateService updateService = new UpdateService();
 
