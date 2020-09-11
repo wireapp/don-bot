@@ -25,9 +25,9 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class SslClient implements Closeable {
-    private Client client;
-    private PublicKey pubKey;
-    private MessageDigest md;
+    private final Client client;
+    private final PublicKey pubKey;
+    private final MessageDigest md;
 
     public SslClient(String pubkey) throws Exception {
         this.md = MessageDigest.getInstance("SHA-1");
@@ -40,9 +40,11 @@ public class SslClient implements Closeable {
     }
 
     private PublicKey createPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String pubKeyPEM = publicKey.replace(
-                "-----BEGIN PUBLIC KEY-----\n", "")
-                .replace("-----END PUBLIC KEY-----", "");
+        String pubKeyPEM = publicKey
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "")
+                .replace("\n", "");
+        Logger.debug("Pubkey: %s", pubKeyPEM);
         byte[] data = Base64.getDecoder().decode(pubKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         KeyFactory fact = KeyFactory.getInstance("RSA");
@@ -87,7 +89,7 @@ public class SslClient implements Closeable {
         return hexify(digest);
     }
 
-    private static String hexify(byte bytes[]) {
+    private static String hexify(byte[] bytes) {
         char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         StringBuilder buf = new StringBuilder(bytes.length * 2);
         for (byte aByte : bytes) {

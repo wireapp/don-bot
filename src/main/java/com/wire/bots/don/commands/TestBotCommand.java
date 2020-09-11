@@ -18,7 +18,8 @@ public class TestBotCommand extends Command {
         ArrayList<Service> services = providerClient.listServices(cookie);
         for (Service s : services) {
             if (s.name.compareToIgnoreCase(botName) == 0) {
-                try (SslClient sslClient = new SslClient(s.public_keys[0].pem)) {
+                final String pem = s.public_keys[0].pem;
+                try (SslClient sslClient = new SslClient(pem)) {
                     String response = sslClient.testService(s);
                     client.sendText(response);
                     return;
