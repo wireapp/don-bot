@@ -1,6 +1,11 @@
 name: CI
 
 on:
+  push:
+    branches-ignore:
+      - master
+      - staging
+
   pull_request:
 
 jobs:
