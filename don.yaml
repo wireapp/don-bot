@@ -2,16 +2,18 @@ server:
   rootPath: /don/*
   requestLog:
     appenders:
-      - type: console
+      - type: ${APPENDER_TYPE:-console}
         filterFactories:
           - type: status-filter-factory
 
 logging:
   level: INFO
+  appenders:
+    - type: ${APPENDER_TYPE:-console}
   loggers:
     "com.wire.bots.logger": ${LOG_LEVEL:-INFO}
 
-auth: ${SERVICE_TOKEN:-}
+auth: ${SERVICE_TOKEN:-REMOVE_ME}
 apiHost: ${WIRE_API_HOST:-https://prod-nginz-https.wire.com}
 
 database:
