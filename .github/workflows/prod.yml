@@ -6,7 +6,7 @@ on:
 
 env:
   # set docker image for the service - i.e. "lukaswire/polls"
-  DOCKER_IMAGE: wire-bot/don
+  DOCKER_IMAGE: wire-bot/don-bot
   # name of the service in the Rubicon - the value for label name, i.e. "poll"
   SERVICE_NAME: don
 
