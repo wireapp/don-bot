@@ -3,31 +3,32 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.Auth;
-import com.wire.bots.sdk.WireClient;
-import com.wire.bots.sdk.tools.Logger;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import com.wire.xenon.tools.Logger;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 
 public class RegisterCommand extends Command {
     private String email;
 
-    RegisterCommand(WireClient client, UUID userId, DBI db) throws Exception {
+    RegisterCommand(WireClient client, UUID userId, Jdbi db) throws Exception {
         super(client, userId, db);
 
-        client.sendText("What is your email?");
+        client.send(new MessageText("What is your email?"));
     }
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
         if (email == null) {
             if (!isValidEmail(text)) {
-                client.sendText("Please, specify a valid email address");
+                client.send(new MessageText("Please, specify a valid email address"));
                 return this;
             }
 
             email = text.trim().toLowerCase();
-            client.sendText("Enter your password:");
+            client.send(new MessageText("Enter your password:"));
             return this;
         }
 
@@ -40,7 +41,7 @@ public class RegisterCommand extends Command {
                             ", email: %s",
                     botId, email);
             Logger.info(msg);
-            client.sendText("This email address has been already used to register");
+            client.send(new MessageText("This email address has been already used to register"));
             return def();
         }
 
@@ -51,9 +52,9 @@ public class RegisterCommand extends Command {
 
             userDAO.updateUser(userId, email, register.id);
 
-            client.sendText("OK. I sent verification email to: " + email);
+            client.send(new MessageText("OK. I sent verification email to: " + email));
         } catch (FailedRegistrationException e) {
-            client.sendText(e.getMessage());
+            client.send(new MessageText(e.getMessage()));
 
             String msg = String.format("FailedRegistrationException: bot: %s, email: %s, reason: %s", botId, email, e);
             Logger.warning(msg);

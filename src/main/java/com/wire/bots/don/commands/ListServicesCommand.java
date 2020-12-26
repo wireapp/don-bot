@@ -1,19 +1,20 @@
 package com.wire.bots.don.commands;
 
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.WireClient;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class ListServicesCommand extends Command {
-    ListServicesCommand(WireClient client, UUID userId, DBI db) throws Exception {
+    ListServicesCommand(WireClient client, UUID userId, Jdbi db) throws Exception {
         super(client, userId, db);
 
         ArrayList<Service> services = providerClient.listServices(getUser().cookie);
         if (services.isEmpty()) {
-            client.sendText("You have no bots yet :(. Type: `create bot` to create your first bot");
+            client.send(new MessageText("You have no bots yet :(. Type: `create bot` to create your first bot"));
             return;
         }
 
@@ -23,7 +24,7 @@ public class ListServicesCommand extends Command {
             sb.append(String.format(" : %s", s.description));
             sb.append("\n");
         }
-        client.sendText(sb.toString());
+        client.send(new MessageText(sb.toString()));
     }
 
     @Override

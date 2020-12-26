@@ -3,9 +3,12 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.exceptions.UnknownBotException;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.don.model.UpdateService;
-import com.wire.bots.sdk.WireClient;
-import com.wire.bots.sdk.tools.Logger;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.ButtonActionConfirmation;
+import com.wire.xenon.assets.MessageText;
+import com.wire.xenon.assets.Poll;
+import com.wire.xenon.tools.Logger;
+import org.jdbi.v3.core.Jdbi;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ public class UpdateServiceCommand extends Command {
     private final String cookie;
     private String password;
 
-    UpdateServiceCommand(WireClient client, UUID userId, DBI db, String serviceName) throws Exception {
+    UpdateServiceCommand(WireClient client, UUID userId, Jdbi db, String serviceName) throws Exception {
         super(client, userId, db);
 
         cookie = getUser().cookie;
@@ -45,51 +48,48 @@ public class UpdateServiceCommand extends Command {
 
         Logger.debug("UpdateServiceCommand: id: %s, service: %s, name: %s", id, serviceId, serviceName);
 
-        client.sendText("Please enter password one more time:");
+        client.send(new MessageText("Please enter password one more time:"));
+    }
+
+    @Override
+    public Command onChoice(WireClient client, UUID pollId, String buttonId) throws Exception {
+        com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
+
+        service.field = buttonId;
+
+        serviceDAO.updateService(id, "field", service.field);
+
+        client.send(new ButtonActionConfirmation(pollId, buttonId));
+
+        client.send(new MessageText("What should I put there?"));
+
+        Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s", id, service.id, service.field);
+
+        return this;
     }
 
     @Override
     public Command onMessage(WireClient client, String text) throws Exception {
-        if (password == null) {
-            password = text.trim();
-            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`)?"
-                    , URL
-                    , TOKEN
-                    , PUBKEY
-                    , PROFILE_PICTURE
-                    , DESCRIPTION
-                    , SUMMARY
-                    , SERVICE_NAME);
-            client.sendText(txt);
-            return this;
-        }
-
         com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
 
-        if (service.field == null) {
-            service.field = text.toLowerCase();
-            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION + SERVICE_NAME + SUMMARY).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s` | `%s` | `%s`"
-                        , URL
-                        , TOKEN
-                        , PUBKEY
-                        , PROFILE_PICTURE
-                        , DESCRIPTION
-                        , SUMMARY
-                        , SERVICE_NAME);
-                client.sendText(txt);
-                return this;
-            }
+        String value = text.trim();
 
-            serviceDAO.updateService(id, "field", service.field);
-            client.sendText("What should I put there?");
+        if (password == null) {
+            password = value;
 
-            Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s", id, service.id, service.field);
+            Poll poll = new Poll();
+            poll.addText("What would you like to change?");
+            poll.addButton(URL, "Base URL");
+            poll.addButton(TOKEN, "Authentication token");
+            poll.addButton(PUBKEY, "Public key");
+            poll.addButton(PROFILE_PICTURE, "Profile picture");
+            poll.addButton(DESCRIPTION, "Description");
+            poll.addButton(SUMMARY, "Summary");
+            poll.addButton(SERVICE_NAME, "Service name");
 
+            client.send(poll);
             return this;
         }
-
-        String value = text.trim();
 
         Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s, value: %s",
                 id,
@@ -121,11 +121,11 @@ public class UpdateServiceCommand extends Command {
 
         if (b) {
             String msg = "Updated bot " + service.name;
-            client.sendText(msg);
+            client.send(new MessageText(msg));
             Logger.info(msg);
         } else {
             String msg = "Failed to update bot " + service.name;
-            client.sendText(msg);
+            client.send(new MessageText(msg));
             Logger.error(msg);
         }
 

@@ -20,8 +20,8 @@ package com.wire.bots.don.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wire.bots.sdk.server.model.Conversation;
-import com.wire.bots.sdk.server.model.User;
+import com.wire.xenon.backend.models.Conversation;
+import com.wire.xenon.backend.models.User;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewBot {

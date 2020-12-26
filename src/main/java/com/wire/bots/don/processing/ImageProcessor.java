@@ -1,6 +1,6 @@
 package com.wire.bots.don.processing;
 
-import com.wire.bots.sdk.assets.Picture;
+import com.wire.xenon.assets.Picture;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -3,8 +3,9 @@ package com.wire.bots.don.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wire.bots.don.model.Provider;
-import com.wire.bots.sdk.WireClient;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
  * Time: 23:38
  */
 public class GetSelfCommand extends Command {
-    GetSelfCommand(WireClient client, UUID userId, DBI db) throws Exception {
+    GetSelfCommand(WireClient client, UUID userId, Jdbi db) throws Exception {
         super(client, userId, db);
 
         String cookie = getUser().cookie;
@@ -23,7 +24,7 @@ public class GetSelfCommand extends Command {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        client.sendText(mapper.writeValueAsString(provider));
+        client.send(new MessageText(mapper.writeValueAsString(provider)));
     }
 
     @Override

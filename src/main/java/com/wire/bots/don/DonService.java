@@ -1,7 +1,7 @@
 package com.wire.bots.don;
 
-import com.wire.bots.sdk.MessageHandlerBase;
-import com.wire.bots.sdk.Server;
+import com.wire.lithium.Server;
+import com.wire.xenon.MessageHandlerBase;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
