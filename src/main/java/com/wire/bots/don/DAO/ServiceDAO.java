@@ -20,7 +20,7 @@ public interface ServiceDAO {
     int insertService(@Bind("name") String name);
 
     @SqlQuery("SELECT * FROM Service WHERE Id = :serviceId")
-    @RegisterColumnMapper(UserDAO._Mapper.class)
+    @RegisterColumnMapper(_Mapper.class)
     Service getService(@Bind("serviceId") int serviceId);
 
     @SqlUpdate("UPDATE Service SET <column> = :value WHERE id = :serviceId")
