@@ -1,5 +1,6 @@
 package com.wire.bots.don;
 
+import com.waz.model.Messages;
 import com.wire.bots.don.DAO.UserDAO;
 import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.commands.Command;
@@ -100,8 +101,27 @@ public class MessageHandler extends MessageHandlerBase {
     }
 
     @Override
+    public void onEvent(WireClient client, UUID userId, Messages.GenericMessage event) {
+        try {
+            // User clicked on a Poll Button
+            if (event.hasButtonAction()) {
+                final Messages.ButtonAction buttonAction = event.getButtonAction();
+                final String buttonId = buttonAction.getButtonId();
+                final UUID botId = client.getId();
+                final Command command = commands.computeIfAbsent(botId, k -> new DefaultCommand(client, userId, jdbi));
+
+                commands.put(botId, command.onMessage(client, buttonId));
+            }
+        } catch (Exception e) {
+            Logger.error("onEvent: bot: %s, user: %s, msg: %s",
+                    client.getId(),
+                    userId,
+                    event.getMessageId());
+        }
+    }
+
+    @Override
     public void onEditText(WireClient client, EditedTextMessage msg) {
         onText(client, msg);
     }
-
 }

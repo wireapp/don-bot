@@ -5,6 +5,7 @@ import com.wire.bots.don.model.Service;
 import com.wire.bots.don.model.UpdateService;
 import com.wire.xenon.WireClient;
 import com.wire.xenon.assets.MessageText;
+import com.wire.xenon.assets.Poll;
 import com.wire.xenon.tools.Logger;
 import org.jdbi.v3.core.Jdbi;
 
@@ -53,15 +54,18 @@ public class UpdateServiceCommand extends Command {
     public Command onMessage(WireClient client, String text) throws Exception {
         if (password == null) {
             password = text.trim();
-            String txt = String.format("What do you want to change? (`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`)?"
-                    , URL
-                    , TOKEN
-                    , PUBKEY
-                    , PROFILE_PICTURE
-                    , DESCRIPTION
-                    , SUMMARY
-                    , SERVICE_NAME);
-            client.send(new MessageText(txt));
+
+            Poll poll = new Poll();
+            poll.addText("What do you want to change?");
+            poll.addButton(URL, "Base URL");
+            poll.addButton(TOKEN, "Authentication token");
+            poll.addButton(PUBKEY, "Public key");
+            poll.addButton(PROFILE_PICTURE, "Profile picture");
+            poll.addButton(DESCRIPTION, "Description");
+            poll.addButton(SUMMARY, "Summary");
+            poll.addButton(SERVICE_NAME, "Service name");
+
+            client.send(poll);
             return this;
         }
 
@@ -69,18 +73,6 @@ public class UpdateServiceCommand extends Command {
 
         if (service.field == null) {
             service.field = text.toLowerCase();
-            if (!(URL + TOKEN + PUBKEY + PROFILE_PICTURE + DESCRIPTION + SERVICE_NAME + SUMMARY).contains(service.field)) {
-                String txt = String.format("It must be one of these: `%s` | `%s` | `%s` | `%s` | `%s` | `%s` | `%s`"
-                        , URL
-                        , TOKEN
-                        , PUBKEY
-                        , PROFILE_PICTURE
-                        , DESCRIPTION
-                        , SUMMARY
-                        , SERVICE_NAME);
-                client.send(new MessageText(txt));
-                return this;
-            }
 
             serviceDAO.updateService(id, "field", service.field);
             client.send(new MessageText("What should I put there?"));
