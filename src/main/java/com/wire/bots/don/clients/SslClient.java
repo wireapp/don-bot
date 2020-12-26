@@ -3,9 +3,9 @@ package com.wire.bots.don.clients;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wire.bots.don.model.NewBotResponseModel;
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.server.model.NewBot;
-import com.wire.bots.sdk.tools.Logger;
-import com.wire.bots.sdk.tools.Util;
+import com.wire.xenon.backend.models.NewBot;
+import com.wire.xenon.tools.Logger;
+import com.wire.xenon.tools.Util;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;

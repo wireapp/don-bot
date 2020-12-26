@@ -4,25 +4,26 @@ import com.wire.bots.don.DAO.UserDAO;
 import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.commands.Command;
 import com.wire.bots.don.commands.DefaultCommand;
-import com.wire.bots.sdk.MessageHandlerBase;
-import com.wire.bots.sdk.WireClient;
-import com.wire.bots.sdk.models.EditedTextMessage;
-import com.wire.bots.sdk.models.TextMessage;
-import com.wire.bots.sdk.server.model.Member;
-import com.wire.bots.sdk.server.model.NewBot;
-import com.wire.bots.sdk.server.model.SystemMessage;
-import com.wire.bots.sdk.tools.Logger;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.MessageHandlerBase;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import com.wire.xenon.backend.models.Member;
+import com.wire.xenon.backend.models.NewBot;
+import com.wire.xenon.backend.models.SystemMessage;
+import com.wire.xenon.models.EditedTextMessage;
+import com.wire.xenon.models.TextMessage;
+import com.wire.xenon.tools.Logger;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends MessageHandlerBase {
     private final UserDAO userDAO;
-    private final DBI jdbi;
+    private final Jdbi jdbi;
     private final ConcurrentHashMap<UUID, Command> commands = new ConcurrentHashMap<>(); // <botId, command>
 
-    MessageHandler(DBI jdbi) {
+    MessageHandler(Jdbi jdbi) {
         userDAO = jdbi.onDemand(UserDAO.class);
         this.jdbi = jdbi;
     }
@@ -72,9 +73,10 @@ public class MessageHandler extends MessageHandlerBase {
     @Override
     public void onNewConversation(WireClient client, SystemMessage message) {
         try {
-            client.sendText("Some day, and that day may never come," +
+            MessageText msg = new MessageText("Some day, and that day may never come," +
                     " I will call upon you to do a service for me. But until that day accept these bots as a " +
                     "gift from me to you.");
+            client.send(msg);
         } catch (Exception e) {
             Logger.error("onNewConversation: %s", e);
         }
@@ -90,7 +92,7 @@ public class MessageHandler extends MessageHandlerBase {
         } catch (Exception e) {
             Logger.error("onText: %s", e);
             try {
-                client.sendText(e.getMessage());
+                client.send(new MessageText(e.getMessage()));
             } catch (Exception e1) {
                 Logger.error("sendText: %s", e1);
             }

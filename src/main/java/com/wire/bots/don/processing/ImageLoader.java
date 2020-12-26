@@ -18,8 +18,8 @@
 
 package com.wire.bots.don.processing;
 
-import com.wire.bots.sdk.assets.Picture;
-import com.wire.bots.sdk.tools.Util;
+import com.wire.xenon.assets.Picture;
+import com.wire.xenon.tools.Util;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

@@ -20,7 +20,7 @@ package com.wire.bots.don.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wire.bots.sdk.models.otr.PreKey;
+import com.wire.xenon.models.otr.PreKey;
 
 import java.util.ArrayList;
 
