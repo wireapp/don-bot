@@ -1,40 +1,40 @@
-name: CI/CD
+name: CI
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - master
+      - staging
+
+  pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  docker-build:
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set envs
-        # use latest tag as release version
-        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_SHA}
 
-      - name: Build docker image, publish image as latest if the branch is master
-        uses: docker/build-push-action@v1
+        # setup docker actions https://github.com/docker/build-push-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build image
+        id: docker_build
+        uses: docker/build-push-action@v2
         with:
-          repository: wire-bot/don-bot
-          # login to repo
-          registry: eu.gcr.io
-          # see https://github.com/marketplace/actions/docker-build-push#google-container-registry-gcr
-          username: _json_key
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          # pass release_version
-          build_args: release_version=${{ env.RELEASE_VERSION }}
-          # build as latest
-          tags: latest
-          # add labels based on the build - see https://github.com/opencontainers/image-spec/blob/master/annotations.md
-          add_git_labels: true
-          # push only if this is master branch
-          push: ${{ startsWith(github.ref, 'refs/heads/master') }}
+          # https://github.com/docker/build-push-action/issues/220
+          context: .
+          tags: wire/ci-test-image
+          push: false
 
       # Send webhook to Wire using Slack Bot
       - name: Webhook to Wire
         uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
-          author_name: Don Bot CI pipeline
+          author_name: Docker CI pipeline
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_CI }}
         # Send message only if previous step failed

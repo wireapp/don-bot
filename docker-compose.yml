@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - release_version=docker-compose
+    image: eu.gcr.io/wire-bot/don-bot
+    ports:
+      - 8080:8080
+      - 8081:8081
+      - 8082:8082
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/don-bot
+      - DB_USER=don-bot
+      - DB_PASSWORD=don-bot
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    # just for local development
+    environment:
+      - POSTGRES_USER=don-bot
+      - POSTGRES_PASSWORD=don-bot
+      - POSTGRES_DB=don-bot
+    ports:
+      - 5432:5432
+    volumes:
+      - don-bot-db:/var/lib/postgresql/data/
+
+volumes:
+  don-bot-db:
