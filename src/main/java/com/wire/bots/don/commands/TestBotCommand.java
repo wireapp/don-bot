@@ -3,14 +3,15 @@ package com.wire.bots.don.commands;
 import com.wire.bots.don.DAO.model.User;
 import com.wire.bots.don.clients.SslClient;
 import com.wire.bots.don.model.Service;
-import com.wire.bots.sdk.WireClient;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class TestBotCommand extends Command {
-    TestBotCommand(WireClient client, UUID userId, DBI db, String botName) throws Exception {
+    TestBotCommand(WireClient client, UUID userId, Jdbi db, String botName) throws Exception {
         super(client, userId, db);
 
         User user = getUser();
@@ -21,13 +22,13 @@ public class TestBotCommand extends Command {
                 final String pem = s.public_keys[0].pem;
                 try (SslClient sslClient = new SslClient(pem)) {
                     String response = sslClient.testService(s);
-                    client.sendText(response);
+                    client.send(new MessageText(response));
                     return;
                 }
             }
         }
 
-        client.sendText("Could not find " + botName);
+        client.send(new MessageText("Could not find " + botName));
     }
 
     @Override

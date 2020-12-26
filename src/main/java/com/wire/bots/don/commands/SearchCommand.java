@@ -1,12 +1,12 @@
 package com.wire.bots.don.commands;
 
-import com.wire.bots.sdk.WireClient;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 
 public class SearchCommand extends Command {
-    public SearchCommand(WireClient client, UUID userId, DBI db, String params) throws Exception {
+    public SearchCommand(WireClient client, UUID userId, Jdbi db, String params) throws Exception {
         super(client, userId, db);
 
 //        String[] split = params.split(" ");
@@ -15,7 +15,7 @@ public class SearchCommand extends Command {
 //        ObjectMapper mapper = new ObjectMapper();
 //        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 //
-//        client.sendText(mapper.writeValueAsString(services));
+//        client.send(new MessageText(mapper.writeValueAsString(services));
     }
 
     @Override

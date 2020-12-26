@@ -4,10 +4,10 @@ import com.wire.bots.don.DonService;
 import com.wire.bots.don.exceptions.FailedAuthenticationException;
 import com.wire.bots.don.exceptions.FailedRegistrationException;
 import com.wire.bots.don.model.*;
-import com.wire.bots.sdk.assets.Picture;
-import com.wire.bots.sdk.models.AssetKey;
-import com.wire.bots.sdk.tools.Logger;
-import com.wire.bots.sdk.tools.Util;
+import com.wire.xenon.assets.Picture;
+import com.wire.xenon.models.AssetKey;
+import com.wire.xenon.tools.Logger;
+import com.wire.xenon.tools.Util;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;

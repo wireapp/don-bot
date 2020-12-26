@@ -1,14 +1,15 @@
 package com.wire.bots.don.commands;
 
 import com.wire.bots.don.exceptions.*;
-import com.wire.bots.sdk.WireClient;
-import com.wire.bots.sdk.tools.Logger;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.MessageText;
+import com.wire.xenon.tools.Logger;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 
 public class DefaultCommand extends Command {
-    public DefaultCommand(WireClient client, UUID userId, DBI jdbi) {
+    public DefaultCommand(WireClient client, UUID userId, Jdbi jdbi) {
         super(client, userId, jdbi);
     }
 
@@ -77,11 +78,11 @@ public class DefaultCommand extends Command {
                 return def();
             }
 
-            client.sendText("You come to me asking for moar bots.\n" +
+            client.send(new MessageText("You come to me asking for moar bots.\n" +
                     "But you don't ask with respect. \n" +
                     "You don't offer friendship. \n" +
-                    "You don't even think to call me: **Don**\n");
-            client.sendText("Here's the usage:\n" +
+                    "You don't even think to call me: **Don**\n"));
+            client.send(new MessageText("Here's the usage:\n" +
                     "register\n" +
                     "login\n" +
                     "get self\n" +
@@ -92,27 +93,27 @@ public class DefaultCommand extends Command {
                     "delete bot\n" +
                     "enable bot <name>\n" +
                     "code <name>\n" +
-                    "test bot <name>");
+                    "test bot <name>"));
         } catch (NotRegisteredException e) {
             Logger.info(e.getMessage());
-            client.sendText("You need to be registered or logged in first");
+            client.send(new MessageText("You need to be registered or logged in first"));
         } catch (FailedAuthenticationException e) {
             Logger.warning("%s. BotId: %s", e.getMessage(), botId);
-            client.sendText("Authentication failed");
+            client.send(new MessageText("Authentication failed"));
         } catch (AlreadyRegisteredException e) {
             Logger.info(e.getMessage());
-            client.sendText("You are already registered");
+            client.send(new MessageText("You are already registered"));
         } catch (MissingBotNameException e) {
             Logger.info(e.getMessage());
-            client.sendText("Missing bot name");
+            client.send(new MessageText("Missing bot name"));
         } catch (UnknownBotException | TooManyBotsException e) {
             Logger.info(e.getMessage());
-            client.sendText(e.getMessage());
+            client.send(new MessageText(e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();
             String format = String.format("Please retry\nError: %s", e.getLocalizedMessage());
             Logger.error("Something went wrong: %s", e);
-            client.sendText(format);
+            client.send(new MessageText(format));
             deleteCookie();
         }
         return def();

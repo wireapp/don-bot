@@ -27,7 +27,7 @@
 //        if (services.size() >= 10)
 //            throw new TooManyBotsException("You have too many bots already. Try deleting some that are not in use");
 //
-//        client.sendText("What should we call this channel?");
+//        client.send(new MessageText("What should we call this channel?");
 //    }
 //
 //    @Override
@@ -59,7 +59,7 @@
 //
 //            boolean b = PublicChannelClient.createChannel(name, user.id, result.auth_token);
 //            if (!b) {
-//                client.sendText("Failed to create public channel with that name");
+//                client.send(new MessageText("Failed to create public channel with that name");
 //                providerClient.deleteService(cookie, user.password, result.id);
 //                return def();
 //            }
@@ -71,9 +71,9 @@
 //            String msg = String.format("Public channel: `%s` created. Click here: %s to subscribe.",
 //                    name,
 //                    link);
-//            client.sendText(msg);
+//            client.send(new MessageText(msg);
 //        } catch (Exception e) {
-//            client.sendText(e.getMessage());
+//            client.send(new MessageText(e.getMessage());
 //            e.printStackTrace();
 //        }
 //        return def();

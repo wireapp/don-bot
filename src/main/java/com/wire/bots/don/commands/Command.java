@@ -7,10 +7,10 @@ import com.wire.bots.don.clients.ProviderClient;
 import com.wire.bots.don.model.Asset;
 import com.wire.bots.don.processing.ImageLoader;
 import com.wire.bots.don.processing.ImageProcessor;
-import com.wire.bots.sdk.WireClient;
-import com.wire.bots.sdk.assets.Picture;
-import com.wire.bots.sdk.tools.Logger;
-import org.skife.jdbi.v2.DBI;
+import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.Picture;
+import com.wire.xenon.tools.Logger;
+import org.jdbi.v3.core.Jdbi;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -21,11 +21,11 @@ public abstract class Command {
     final UUID botId;
     final UserDAO userDAO;
     final ServiceDAO serviceDAO;
-    protected final DBI db;
+    protected final Jdbi db;
     protected static ProviderClient providerClient = new ProviderClient();
 
 
-    protected Command(WireClient client, UUID userId, DBI db) {
+    protected Command(WireClient client, UUID userId, Jdbi db) {
         this.client = client;
         this.userId = userId;
         this.db = db;
