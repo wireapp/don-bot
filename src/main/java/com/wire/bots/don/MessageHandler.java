@@ -105,12 +105,13 @@ public class MessageHandler extends MessageHandlerBase {
         try {
             // User clicked on a Poll Button
             if (event.hasButtonAction()) {
-                final Messages.ButtonAction buttonAction = event.getButtonAction();
-                final String buttonId = buttonAction.getButtonId();
                 final UUID botId = client.getId();
                 final Command command = commands.computeIfAbsent(botId, k -> new DefaultCommand(client, userId, jdbi));
 
-                commands.put(botId, command.onMessage(client, buttonId));
+                final Messages.ButtonAction buttonAction = event.getButtonAction();
+                final String buttonId = buttonAction.getButtonId();
+                final UUID pollId = UUID.fromString(buttonAction.getReferenceMessageId());
+                commands.put(botId, command.onChoice(client, pollId, buttonId));
             }
         } catch (Exception e) {
             Logger.error("onEvent: bot: %s, user: %s, msg: %s",

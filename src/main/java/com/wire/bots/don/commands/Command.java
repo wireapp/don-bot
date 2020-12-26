@@ -36,6 +36,10 @@ public abstract class Command {
 
     public abstract Command onMessage(WireClient client, String text) throws Exception;
 
+    public Command onChoice(WireClient client, UUID pollId, String buttonId) throws Exception {
+        return this;
+    }
+
     Command def() {
         return new DefaultCommand(client, userId, db);
     }

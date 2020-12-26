@@ -4,6 +4,7 @@ import com.wire.bots.don.exceptions.UnknownBotException;
 import com.wire.bots.don.model.Service;
 import com.wire.bots.don.model.UpdateService;
 import com.wire.xenon.WireClient;
+import com.wire.xenon.assets.ButtonActionConfirmation;
 import com.wire.xenon.assets.MessageText;
 import com.wire.xenon.assets.Poll;
 import com.wire.xenon.tools.Logger;
@@ -51,12 +52,33 @@ public class UpdateServiceCommand extends Command {
     }
 
     @Override
+    public Command onChoice(WireClient client, UUID pollId, String buttonId) throws Exception {
+        com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
+
+        service.field = buttonId;
+
+        serviceDAO.updateService(id, "field", service.field);
+
+        client.send(new ButtonActionConfirmation(pollId, buttonId));
+
+        client.send(new MessageText("What should I put there?"));
+
+        Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s", id, service.id, service.field);
+
+        return this;
+    }
+
+    @Override
     public Command onMessage(WireClient client, String text) throws Exception {
+        com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
+
+        String value = text.trim();
+
         if (password == null) {
-            password = text.trim();
+            password = value;
 
             Poll poll = new Poll();
-            poll.addText("What do you want to change?");
+            poll.addText("What would you like to change?");
             poll.addButton(URL, "Base URL");
             poll.addButton(TOKEN, "Authentication token");
             poll.addButton(PUBKEY, "Public key");
@@ -68,21 +90,6 @@ public class UpdateServiceCommand extends Command {
             client.send(poll);
             return this;
         }
-
-        com.wire.bots.don.DAO.model.Service service = serviceDAO.getService(id);
-
-        if (service.field == null) {
-            service.field = text.toLowerCase();
-
-            serviceDAO.updateService(id, "field", service.field);
-            client.send(new MessageText("What should I put there?"));
-
-            Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s", id, service.id, service.field);
-
-            return this;
-        }
-
-        String value = text.trim();
 
         Logger.debug("UpdateServiceCommand: id: %s, service: %s, field: %s, value: %s",
                 id,
