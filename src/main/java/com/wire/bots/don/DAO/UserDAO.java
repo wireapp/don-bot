@@ -2,12 +2,12 @@ package com.wire.bots.don.DAO;
 
 
 import com.wire.bots.don.DAO.model.User;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import org.jdbi.v3.core.mapper.ColumnMapper;
+import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.sqlobject.config.RegisterColumnMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ public interface UserDAO {
     int insertUser(@Bind("userId") UUID userId, @Bind("name") String name);
 
     @SqlQuery("SELECT * FROM Developer WHERE UserId = :userId")
-    @RegisterMapper(_Mapper.class)
+    @RegisterColumnMapper(_Mapper.class)
     User getUser(@Bind("userId") UUID userId);
 
     @SqlUpdate("UPDATE Developer SET Email = :email, Provider = :provider WHERE UserId = :userId")
@@ -30,9 +30,9 @@ public interface UserDAO {
     @SqlUpdate("UPDATE Developer SET cookie = null WHERE UserId = :userId")
     int deleteCookie(@Bind("userId") UUID userId);
 
-    class _Mapper implements ResultSetMapper<User> {
+    class _Mapper implements ColumnMapper<User> {
         @Override
-        public User map(int i, ResultSet rs, StatementContext statementContext) throws SQLException {
+        public User map(ResultSet rs, int columnNumber, StatementContext ctx) throws SQLException {
             User user = new User();
             user.id = (UUID) rs.getObject("UserId");
             user.name = rs.getString("name");
@@ -42,5 +42,6 @@ public interface UserDAO {
 
             return user;
         }
+
     }
 }
