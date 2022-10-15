@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn package -DskipTests=true
 
 # runtime stage
-FROM dejankovacevic/bots.runtime:2.10.3
+FROM wirebot/runtime
 
 WORKDIR /opt/don
 
@@ -29,4 +29,4 @@ ENV RELEASE_FILE_PATH=/etc/don/release.txt
 RUN echo $release_version > $RELEASE_FILE_PATH
 
 EXPOSE  8080 8081 8082
-ENTRYPOINT ["java", "-jar", "don.jar", "server", "/etc/don/don.yaml"]
+ENTRYPOINT ["java","-javaagent:/opt/wire/lib/prometheus-agent.jar=8082:/opt/wire/lib/metrics.yaml", "-jar", "don.jar", "server", "/etc/don/don.yaml"]
