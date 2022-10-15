@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn package -DskipTests=true
 
 # runtime stage
-FROM wirebot/runtime:1.1.3
+FROM wirebot/runtime:1.1.1
 
 WORKDIR /opt/don
 
