@@ -2,6 +2,10 @@ package com.wire.bots.don;
 
 import com.wire.lithium.Server;
 import com.wire.xenon.MessageHandlerBase;
+import io.dropwizard.bundles.redirect.PathRedirect;
+import io.dropwizard.bundles.redirect.RedirectBundle;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -14,7 +18,9 @@ public class DonService extends Server<DonConfig> {
 
     @Override
     public void initialize(Bootstrap<DonConfig> bootstrap) {
-        super.initialize(bootstrap);
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
+        bootstrap.addBundle(new RedirectBundle(new PathRedirect("/", "/status"), new PathRedirect("/bots/status", "/status")));
+
         instance = (DonService) bootstrap.getApplication();
     }
 
