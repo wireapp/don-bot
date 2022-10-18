@@ -12,6 +12,7 @@ services:
       - 8081:8081
       - 8082:8082
     environment:
+      - SERVICE_TOKEN=its_a_secret
       - DB_URL=jdbc:postgresql://db:5432/don-bot
       - DB_USER=don-bot
       - DB_PASSWORD=don-bot

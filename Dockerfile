@@ -1,4 +1,4 @@
-FROM maven:3.6.3-jdk-8-slim AS build
+FROM maven:3-openjdk-11 AS build
 LABEL description="Wire Don-Bot"
 LABEL project="wire-bot:don"
 
@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn package -DskipTests=true
 
 # runtime stage
-FROM wirebot/runtime:1.1.1
+FROM wirebot/runtime:1.2.0
 
 WORKDIR /opt/don
 

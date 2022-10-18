@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ProviderClient {
@@ -156,7 +157,7 @@ public class ProviderClient {
         return response.getStatus() == 200;
     }
 
-    public boolean updateService(String cookie, String id, UpdateService service) throws IOException {
+    public boolean updateService(String cookie, String id, UpdateService service) {
 
         Response response = target.
                 path("provider/services").
@@ -220,9 +221,9 @@ public class ProviderClient {
 
         // Complete
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        os.write(sb.toString().getBytes("utf-8"));
+        os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
         os.write(data);
-        os.write("\r\n--frontier--\r\n".getBytes("utf-8"));
+        os.write("\r\n--frontier--\r\n".getBytes(StandardCharsets.UTF_8));
 
         Response response = target
                 .path("provider/assets")
@@ -237,6 +238,6 @@ public class ProviderClient {
 
         AssetKey assetKey = response.readEntity(AssetKey.class);
 
-        return assetKey.key;
+        return assetKey.id;
     }
 }
