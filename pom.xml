@@ -6,31 +6,18 @@
 
     <artifactId>don</artifactId>
     <groupId>com.wire.bots</groupId>
-    <version>1.4.0</version>
-
-    <repositories>
-        <repository>
-            <id>dkovacevic-lithium</id>
-            <url>https://packagecloud.io/dkovacevic/lithium/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <version>1.5.0</version>
 
     <dependencies>
         <dependency>
             <groupId>com.wire</groupId>
             <artifactId>lithium</artifactId>
-            <version>3.0.1</version>
+            <version>3.4.2</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>stringtemplate</artifactId>
-            <version>3.2</version>
+            <version>4.0.2</version>
         </dependency>
     </dependencies>
 
