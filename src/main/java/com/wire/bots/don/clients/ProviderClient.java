@@ -145,7 +145,7 @@ public class ProviderClient {
                 path("provider/services").
                 path(id).
                 path("connection").
-                request(MediaType.APPLICATION_JSON).
+                request(MediaType.TEXT_PLAIN).
                 header("Cookie", cookie).
                 put(Entity.entity(service, MediaType.APPLICATION_JSON));
 
@@ -162,7 +162,7 @@ public class ProviderClient {
         Response response = target.
                 path("provider/services").
                 path(id).
-                request(MediaType.APPLICATION_JSON).
+                request(MediaType.TEXT_PLAIN).
                 header("Cookie", cookie).
                 put(Entity.entity(service, MediaType.APPLICATION_JSON));
 
@@ -181,7 +181,7 @@ public class ProviderClient {
         Response response = target.
                 path("provider/services").
                 path(id).
-                request(MediaType.APPLICATION_JSON).
+                request(MediaType.TEXT_PLAIN).
                 header("Cookie", cookie).
                 build("DELETE", Entity.entity(auth, MediaType.APPLICATION_JSON)).
                 invoke();
@@ -227,7 +227,7 @@ public class ProviderClient {
 
         Response response = target
                 .path("provider/assets")
-                .request(MediaType.APPLICATION_JSON_TYPE)
+                .request(MediaType.TEXT_PLAIN)
                 .header("Cookie", cookie)
                 .post(Entity.entity(os.toByteArray(), "multipart/mixed; boundary=frontier"));
 
